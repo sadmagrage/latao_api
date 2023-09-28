@@ -2,11 +2,12 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 
+require("../configs/mongoose");
 const User = require("../models/UserModel");
 const CustomError = require("../errors/CustomError");
 
 const login = async (userDto) => {
-    const user = await User.findOne({ where: { cpf: userDto.cpf } });
+    const user = await User.findOne({ 'cpf': userDto.cpf });
 
     if (!user) throw new CustomError("Wrong credentials", 401);
 
@@ -23,16 +24,16 @@ const login = async (userDto) => {
 };
 
 const register = async (userDto) => {
-    const cpfExists = await User.findOne({ where: { cpf: userDto.cpf } });
-
+    const cpfExists = await User.findOne({ 'cpf': userDto.cpf });
+    
     if (cpfExists) throw new CustomError("CPF already registered", 409);
 
     const getHash = await bcrypt.hash(userDto.password, 12);
     
-    const user = User.build({ 
-        name: userDto.name, 
-        password: getHash, 
-        cpf: userDto.cpf, 
+    const user = new User({ 
+        name: userDto.name,
+        password: getHash,
+        cpf: userDto.cpf,
         age: userDto.age,
         address: userDto.address,
         number: userDto.number,
@@ -53,11 +54,7 @@ const data = async (token) => {
         return decoded.cpf;
     });
 
-    const user = await User.findOne({ where: { cpf: cpf }, attributes: ["name", "cpf", "age", "address", "number", "passportNumber", "trips", "tripsId", "cards", "active", "removed"] });
-
-    user.trips = JSON.parse(user.trips);
-    user.tripsId = JSON.parse(user.tripsId);
-    user.cards = JSON.parse(user.cards);
+    const user = await User.findOne({ 'cpf': cpf }).select("name cpf age address number passportNumber");
 
     return user;
 };

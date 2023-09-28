@@ -1,58 +1,45 @@
-const { DataTypes } = require("sequelize");
-const sequelize = require("../configs/sequelize")
+const Mongoose = require("mongoose");
+const uuid = require("uuid");
 
-const User = sequelize.define("user", {
-    user_id: {
-        type: DataTypes.UUID,
-        defaultValue: DataTypes.UUIDV4,
-        primaryKey: true
+const userSchema = new Mongoose.Schema({
+    _id: {
+        type: Buffer,
+        default: () => {
+            const generatedUUID = uuid.v4().replace(/-/g, '');
+            return Buffer.from(generatedUUID, 'hex');
+        },
+        get: (value) => {
+            //CONVERTER BN PARA UUID
+        }
     },
     name: {
-        type: DataTypes.STRING,
-        allowNull: false
+        type: String,
+        required: true
     },
     password: {
-        type: DataTypes.STRING,
-        allowNull: false
+        type: String,
+        required: true
     },
     cpf: {
-        type: DataTypes.STRING(11),
-        allowNull: false
+        type: String,
+        required: true,
+        unique: true
     },
     age: {
-        type: DataTypes.INTEGER,
-        allowNull: false
+        type: Number,
+        required: true
     },
     address: {
-        type: DataTypes.STRING
+        type: String
     },
     number: {
-        type: DataTypes.STRING
+        type: String
     },
     passportNumber: {
-        type: DataTypes.INTEGER,
-        allowNull: false
-    },
-    trips: {
-        type: DataTypes.JSON,
-        defaultValue: []
-    },
-    tripsId: {
-        type: DataTypes.JSON,
-        defaultValue: []
-    },
-    cards: {
-        type: DataTypes.JSON,
-        defaultValue: []
-    },
-    active: {
-        type: DataTypes.BOOLEAN,
-        defaultValue: true
-    },
-    removed: {
-        type: DataTypes.BOOLEAN,
-        defaultValue: false
+        type: String
     }
 });
+
+const User = Mongoose.model("user", userSchema);
 
 module.exports = User;
