@@ -9,7 +9,8 @@ const userSchema = new Mongoose.Schema({
             return Buffer.from(generatedUUID, 'hex');
         },
         get: (value) => {
-            //CONVERTER BN PARA UUID
+            const id = Buffer.from(value, 'hex');
+            return uuid.stringify(id);
         }
     },
     name: {

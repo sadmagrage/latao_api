@@ -54,9 +54,17 @@ const data = async (token) => {
         return decoded.cpf;
     });
 
-    const user = await User.findOne({ 'cpf': cpf }).select("name cpf age address number passportNumber");
-
-    return user;
+    const user = await User.findOne({ 'cpf': cpf });
+    
+    return {
+        user_id: user._id,
+        name: user.name,
+        cpf: user.cpf,
+        age: user.age,
+        address: user.address,
+        number: user.number,
+        passport_number: user.passport_number
+    };
 };
 
 module.exports = { login, register, data};
