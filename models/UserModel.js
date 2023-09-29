@@ -1,17 +1,12 @@
 const Mongoose = require("mongoose");
 const uuid = require("uuid");
+const { uuidToBin, binToUuid } = require("../utils/conversor");
 
 const userSchema = new Mongoose.Schema({
     _id: {
         type: Buffer,
-        default: () => {
-            const generatedUUID = uuid.v4().replace(/-/g, '');
-            return Buffer.from(generatedUUID, 'hex');
-        },
-        get: (value) => {
-            const id = Buffer.from(value, 'hex');
-            return uuid.stringify(id);
-        }
+        default: () => uuidToBin(uuid.v4()),
+        get: (value) => binToUuid(value) //O ERRO TA NO USER MESMO
     },
     name: {
         type: String,
@@ -36,7 +31,7 @@ const userSchema = new Mongoose.Schema({
     number: {
         type: String
     },
-    passportNumber: {
+    passport_number: {
         type: String
     }
 });

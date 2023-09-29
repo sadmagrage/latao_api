@@ -9,9 +9,9 @@ const userTripIdsRoute = require("./routes/userTripIdsRoute");
 const app = express();
 
 app.use("/user", userRoute);
+//app.use("/flight", flightRoute);
 
-/* app.use("/flight", flightRoute);
-app.use("/destiny", destinyRoute);
+/*app.use("/destiny", destinyRoute);
 app.use("/card", cardRoute);
 app.use("/userTripIds", userTripIdsRoute); */
 
