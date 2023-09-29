@@ -8,7 +8,7 @@ const route = express.Router();
 route.use(bodyParser.json());
 
 route.get("/", flightController.findAll);
-route.get("/:flight_id", flightController.findOne);
-route.get("/", flightController.save);
+route.get("/:flightId", flightController.findOne);
+route.post("/", flightController.save);
 
 module.exports = route;

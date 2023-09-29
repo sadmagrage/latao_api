@@ -55,7 +55,7 @@ const data = async (token) => {
     });
 
     const user = await User.findOne({ 'cpf': cpf });
-    
+
     return {
         user_id: user._id,
         name: user.name,

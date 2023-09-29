@@ -1,11 +1,13 @@
 const Mongoose = require("mongoose");
+const { v4 } = require("uuid");
+
 const { uuidToBin, binToUuid } = require("../utils/conversor");
 
 const flightSchema = new Mongoose.Schema({
     _id: {
         type: Buffer,
-        default: () => uuidToBin(uuid.v4()),
-        get: (value) => binToUuid(value)
+        default: () => uuidToBin(v4()),
+        get: (bin) => binToUuid(bin)
     },
     price: {
         type: String,
@@ -35,14 +37,14 @@ const flightSchema = new Mongoose.Schema({
         type: Date,
         required: true
     },
-    start_destiny: {
-        type: Mongoose.Schema.Types.ObjectId,
-        ref: 'destiny',
+    start_destination: {
+        type: Mongoose.Schema.Types.Buffer,
+        ref: 'destination',
         required: true
     },
-    final_destiny: {
-        type: Mongoose.Schema.Types.ObjectId,
-        ref: 'destiny',
+    final_destination: {
+        type: Mongoose.Schema.Types.Buffer,
+        ref: 'destination',
         required: true
     }
 });

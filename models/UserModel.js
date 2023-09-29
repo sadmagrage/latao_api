@@ -1,12 +1,13 @@
 const Mongoose = require("mongoose");
-const uuid = require("uuid");
+const { v4 } = require("uuid");
+
 const { uuidToBin, binToUuid } = require("../utils/conversor");
 
 const userSchema = new Mongoose.Schema({
     _id: {
         type: Buffer,
-        default: () => uuidToBin(uuid.v4()),
-        get: (value) => binToUuid(value) //O ERRO TA NO USER MESMO
+        default: () => uuidToBin(v4()),
+        get: (bin) => binToUuid(bin)
     },
     name: {
         type: String,
