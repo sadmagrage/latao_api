@@ -32,17 +32,17 @@ const findOne = async (req, res) => {
 };
 
 const save = async (req, res) => {
-    try {
+    //try {
         const flight = await flightService.save(req.body);
 
         res.status(201).json(flight);
-    } catch (error) {
+    /* } catch (error) {
         if (error instanceof CustomError) {
             res.status(error.status).json(error.message);
             return;
         }
         res.status(500).json(error.message);
-    }
+    } */
 };
 
 module.exports = { findAll, findOne, save };

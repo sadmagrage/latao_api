@@ -37,13 +37,13 @@ const flightSchema = new Mongoose.Schema({
         type: Date,
         required: true
     },
-    start_destination: {
-        type: Mongoose.Schema.Types.Buffer,
+    start_destination_id: {
+        type: Mongoose.Schema.Types.UUID,
         ref: 'destination',
         required: true
     },
-    final_destination: {
-        type: Mongoose.Schema.Types.Buffer,
+    final_destination_id: {
+        type: Mongoose.Schema.Types.UUID,
         ref: 'destination',
         required: true
     }

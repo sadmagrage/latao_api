@@ -1,13 +1,13 @@
 require("../configs/mongoose");
-const Destination = require("../models/DestinationModel");
 const Flight = require("../models/FlightModel");
-const { uuidToBin, binToUuid } = require("../utils/conversor");
+const { uuidToBin } = require("../utils/conversor");
 const formatObject = require("../utils/formatObject");
+const reformedFlight = require("../utils/reformedFlight");
 
 const findAll = async () => {
     const flights = await Flight.find();
 
-    return formatObject(flights);
+    return reformedFlight(flights);
 };
 
 const findOne = async (flightId) => {
@@ -15,10 +15,7 @@ const findOne = async (flightId) => {
 
     const flight = await Flight.findOne({ _id: flightIdBin });
 
-    flight.start_destination = await Destination.findOne({ '_id': uuidToBin(start_destination) });
-    flight.final_destination = await Destination.findOne({ '_id': uuidToBin(final_destination) });
-
-    return formatObject(flight);
+    return reformedFlight(flight);
 };
 
 const save = async (flightDto) => {
@@ -32,18 +29,13 @@ const save = async (flightDto) => {
         bagage_weight: flightDto.bagage_weight,
         going_date: new Date(),//flightDto.goindDate,
         return_date: new Date(),//flightDto.returnDate,
-        start_destination: uuidToBin(flightDto.start_destination),
-        final_destination: uuidToBin(flightDto.final_destination)
+        start_destination_id: flightDto.start_destination_id,
+        final_destination_id: flightDto.final_destination_id
     });
 
     await flight.save();
-
-    flight.start_destination = formatObject(await Destination.findOne({ '_id': uuidToBin(flight.start_destination) }));
-    flight.final_destination = formatObject(await Destination.findOne({ '_id': uuidToBin(flight.final_destination) }));
-
-    //flight.start_destination._id = binToUuid(flight.start_destination._id);
-
-    return formatObject(flight);
+    
+    return reformedFlight(flight);
 };
 
 module.exports = { findAll, findOne, save };
