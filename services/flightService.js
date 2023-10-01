@@ -1,25 +1,24 @@
 require("../configs/mongoose");
 const Flight = require("../models/FlightModel");
 const { uuidToBin } = require("../utils/conversor");
-const formatObject = require("../utils/formatObject");
 const reformedFlight = require("../utils/reformedFlight");
+const CustomError = require("../errors/CustomError");
 
 const findAll = async () => {
     const flights = await Flight.find();
-
-    return reformedFlight(flights);
+    
+    return await reformedFlight(flights);
 };
 
 const findOne = async (flightId) => {
-    const flightIdBin = uuidToBin(flightId);
+    const flight = await Flight.findOne({ _id: uuidToBin(flightId) });
 
-    const flight = await Flight.findOne({ _id: flightIdBin });
+    if (!flight) throw new CustomError("Flight not found.", 404);
 
-    return reformedFlight(flight);
+    return await reformedFlight(flight);
 };
 
 const save = async (flightDto) => {
-    
     const flight = new Flight({
         price: flightDto.price,
         place: flightDto.place,
@@ -35,7 +34,7 @@ const save = async (flightDto) => {
 
     await flight.save();
     
-    return reformedFlight(flight);
+    return await reformedFlight(flight);
 };
 
 module.exports = { findAll, findOne, save };

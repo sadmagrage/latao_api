@@ -11,6 +11,8 @@ const findAll = async () => {
 const findOne = async (destinationId) => {
     const destination = await Destination.findOne({ '_id': uuidToBin(destinationId) });
 
+    if (!destination) throw new CustomError("Destination not found.", 404);
+
     return formatObject(destination);
 }
 
