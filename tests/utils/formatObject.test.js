@@ -1,16 +1,28 @@
-const { v4 } = require("uuid");
-const { uuidToBin, binToUuid } = require("../../utils/conversor");
+require("../../configs/mongoose");
+const Destination = require("../../models/DestinationModel");
 const formatObject = require("../../utils/formatObject");
+const destinationService = require("../../services/destinationService");
 
-test('Transforma _id Buffer em UUID', () => {
-    const uuid = v4();
+test('Transforma _id Buffer em UUID', async () => {
+    const destinationToInsert = new Destination({
+        city_name: "teste",
+        zipcode: "teste",
+        city_tag: "teste",
+        country: "teste"
+    });
 
-    const modelObject = { _doc: { _id: uuidToBin(uuid) }, _id: uuidToBin(uuid) };
-    //AINDA NAO ACABEI
-    const modelArray = [];
+    await destinationToInsert.save();
 
-    modelArray.push({ _doc: { _id: uuidToBin(v4()) } });
-    modelArray.push({ _doc: { _id: uuidToBin(v4()) } });
+    const destination = (await destinationService.findAll())[0];
+    const pureDestination = (await Destination.find())[0];
+
+    expect(destination._id).toHaveLength(36);
+    expect(formatObject(pureDestination)).toStrictEqual(destination);
+
+    const destinations = await destinationService.findAll();
+    const pureDestinations = await Destination.find();
     
-    expect(formatObject(modelObject)._id).toBe(binToUuid(modelObject._doc._id));
+    expect(formatObject(pureDestinations)).toStrictEqual(destinations);
+    
+    await Destination.findOneAndDelete({ city_name: "teste" });
 });
