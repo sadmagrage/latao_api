@@ -1,3 +1,67 @@
+const cardService = require("../../services/cardService");
+const Card = require("../../models/CardModel");
+const formatObject = require("../../utils/formatObject");
+
+jest.mock("../../utils/formatObject", () => jest.fn());
+
+jest.mock("../../models/CardModel", () => ({
+    find: jest.fn(),
+    findOne: jest.fn(),
+    save: jest.fn(),
+    constructor: jest.fn()
+}));
+
+describe("cardService", () => {
+    
+    test("cardService findAll", async () => {
+        
+        Card.find.mockResolvedValue([{}]);
+
+        const cards = await Card.find();
+
+        formatObject.mockReturnValue(cards);
+
+        await cardService.findAll();
+
+        expect(Card.find).toHaveBeenCalled();
+        expect(formatObject).toHaveBeenCalledWith(cards);
+    });
+
+    test("cardService findOne", async () => {
+
+        Card.findOne.mockResolvedValue({});
+
+        const cardId = "id";
+        const card = await Card.findOne(cardId);
+
+        formatObject.mockReturnValue(card);
+
+        await cardService.findOne(cardId);
+
+        expect(Card.findOne).toHaveBeenCalledWith(cardId);
+        expect(formatObject).toHaveBeenCalledWith(card);
+    });
+
+    test("cardService save", async () => {
+
+        Card.save.mockResolvedValue({});
+        Card.constructor.mockReturnValue({});
+
+        const cardDto = {
+            security_number: "teste",
+            validity: "teste",
+            property_number: "teste",
+            property_name: "teste",
+            user_id: "teste"
+        };
+
+        await cardService.save(cardDto);
+
+        expect(Card.save).toHaveBeenCalled();
+    });
+});
+
+
 /* const { v4 } = require("uuid");
 
 const { findAll } = require("../../services/cardService");
@@ -85,6 +149,8 @@ describe("Card service", () => {
     });
     
     it("save", async () => {
+        const userId = v4();
+
         Card.save.mockResolvedValue({
             _id: v4(),
             security_number: 0,
@@ -103,5 +169,3 @@ describe("Card service", () => {
         });
     });
 }); */
-
-it("", () => expect(1).toBe(1))

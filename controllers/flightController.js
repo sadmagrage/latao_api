@@ -11,8 +11,7 @@ const findAll = async (req, res) => {
             res.status(error.status).json(error.message);
             return;
         }
-        //res.status(500).json(error.message);
-        throw error;
+        res.status(500).json(error.message);
     }
 };
 
