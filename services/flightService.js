@@ -19,21 +19,24 @@ const findOne = async (flightId) => {
 };
 
 const save = async (flightDto) => {
-    const flight = new Flight({
+
+    flightDto.goingDate = new Date();
+    flightDto.returnDate = new Date();
+
+    const flight = await Flight.create({
         price: flightDto.price,
         place: flightDto.place,
-        flight_number: flightDto.flight_number,
-        airport_tag: flightDto.airport_tag,
+        flight_number: flightDto.flightNumber,
+        airport_tag: flightDto.airportTag,
         company: flightDto.company,
-        bagage_weight: flightDto.bagage_weight,
-        going_date: new Date(),//flightDto.goindDate,
-        return_date: new Date(),//flightDto.returnDate,
-        start_destination_id: flightDto.start_destination_id,
-        final_destination_id: flightDto.final_destination_id
+        bagage_weight: flightDto.bagageWeight,
+        going_date: flightDto.goindDate,
+        return_date: flightDto.returnDate,
+        start_destination_id: flightDto.startDestinationId,
+        final_destination_id: flightDto.finalDestinationId
     });
-
-    await flight.save();
-    
+    //ARRUMANDO OS JSON PARA CAMELCASE
+    //USANDO .CREATE AGR
     return await reformedFlight(flight);
 };
 

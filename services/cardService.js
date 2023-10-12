@@ -1,6 +1,6 @@
 const Card = require("../models/CardModel");
 const formatObject = require("../utils/formatObject");
-
+const User = require("../models/UserModel")
 const findAll = async () => {
     const cards = await Card.find();
 
@@ -14,15 +14,15 @@ const findOne = async (userId) => {
 }
 
 const save = async (cardDto) => {
-    const card = new Card({
+    cardDto.userId = (await User.find())[0]._id;
+    cardDto.validity = new Date();
+
+    const card = await Card.create({
         security_number: cardDto.securityNumber,
         validity: cardDto.validity,
-        property_number: cardDto.propertyNumber,
         property_name: cardDto.propertyName,
         user_id: cardDto.userId
     });
-
-    await card.save();
 
     return formatObject(card);
 }
