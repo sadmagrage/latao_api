@@ -1,4 +1,4 @@
-require("../configs/mongoose");
+//require("../configs/mongoose");
 const Flight = require("../models/FlightModel");
 const { uuidToBin } = require("../utils/conversor");
 const reformedFlight = require("../utils/reformedFlight");
@@ -7,7 +7,7 @@ const formatProperties = require("../utils/formatProperties");
 
 const findAll = async () => {
 
-    const flights = formatObject(await Flight.find());
+    const flights = await Flight.find();
 
     const reformedFlightObj = await reformedFlight(flights);
     
