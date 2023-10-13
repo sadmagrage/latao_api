@@ -7,20 +7,35 @@ jest.mock("../../utils/formatObject", () => jest.fn());
 jest.mock("../../models/CardModel", () => ({
     find: jest.fn(),
     findOne: jest.fn(),
-    save: jest.fn(),
-    constructor: jest.fn()
+    create: jest.fn(),
 }));
 
 describe("cardService", () => {
+
+    const cardCamelCase = {
+        "_id": "",
+        "securityNumber": "",
+        "validity": "",
+        "propertyName": "",
+        "userId": ""
+    };
+
+    const cardSnakeCase = {
+        "_id": "",
+        "security_number": "",
+        "validity": "",
+        "property_name": "",
+        "user_id": ""
+    }
     
     test("cardService findAll", async () => {
         
-        Card.find.mockResolvedValue([{}]);
+        Card.find.mockResolvedValue([cardSnakeCase]);
 
         const cards = await Card.find();
 
         formatObject.mockReturnValue(cards);
-
+        
         await cardService.findAll();
 
         expect(Card.find).toHaveBeenCalled();
@@ -29,7 +44,7 @@ describe("cardService", () => {
 
     test("cardService findOne", async () => {
 
-        Card.findOne.mockResolvedValue({});
+        Card.findOne.mockResolvedValue(cardSnakeCase);
 
         const cardId = "id";
         const card = await Card.findOne(cardId);
@@ -44,128 +59,11 @@ describe("cardService", () => {
 
     test("cardService save", async () => {
 
-        Card.save.mockResolvedValue({});
-        Card.constructor.mockReturnValue({});
+        Card.create.mockResolvedValue(cardCamelCase);
 
-        const cardDto = {
-            security_number: "teste",
-            validity: "teste",
-            property_number: "teste",
-            property_name: "teste",
-            user_id: "teste"
-        };
+        const response = await cardService.save(cardSnakeCase);
 
-        await cardService.save(cardDto);
-
-        expect(Card.save).toHaveBeenCalled();
+        expect(Card.create).toHaveBeenCalledWith(cardSnakeCase);
+        expect(response).toStrictEqual(cardCamelCase);
     });
 });
-
-
-/* const { v4 } = require("uuid");
-
-const { findAll } = require("../../services/cardService");
-const Card = require("../../models/CardModel");
-
-jest.mock("../../models/CardModel", () => ({
-    find: jest.fn(),
-    findOne: jest.fn(),
-    save: jest.fn()
-}));
-
-describe("Card service", () => {
-
-    it("findAll", async () => {
-        const userId = v4();
-
-        Card.find.mockResolvedValue([{
-            _id: v4(),
-            security_number: 0,
-            validity: new Date(),
-            property_number: "teste",
-            property_name: "teste",
-            user_id: userId,
-            _doc: {
-                _id: null,
-                security_number: null,
-                validity: null,
-                property_number: null,
-                property_name: null,
-                user_id: null
-            }
-        }]);
-
-        const cards = await findAll();
-
-        expect(Card.find).toHaveBeenCalled();
-        expect(cards).toBeInstanceOf(Array);
-        
-        let isNull = false;
-
-        Object.keys(cards[0]).map(prop => {
-            if (cards[0][prop] == null) isNull = true;
-        });
-
-        expect(isNull).toBe(false);
-    });
-    
-    it("findOne", async () => {
-        const userId = v4();
-
-        Card.findOne.mockResolvedValue({
-            _id: v4(),
-            security_number: 0,
-            validity: new Date(),
-            property_number: "teste",
-            property_name: "teste",
-            user_id: userId,
-            _doc: {
-                _id: null,
-                security_number: null,
-                validity: null,
-                property_number: null,
-                property_name: null,
-                user_id: null
-            }
-        });
-
-        Card.findOne.mockResolvedValue({
-            _id: v4(),
-            security_number: 0,
-            validity: new Date(),
-            property_number: "teste",
-            property_name: "teste",
-            user_id: userId
-        });
-
-        const card = await Card.findOne();
-
-        expect(Card.findOne).toHaveBeenCalled();
-        expect(typeof card).toBe("object");
-
-        Object.keys(card).map(prop => {
-            expect(card[prop]).toBeDefined();
-        });
-    });
-    
-    it("save", async () => {
-        const userId = v4();
-
-        Card.save.mockResolvedValue({
-            _id: v4(),
-            security_number: 0,
-            validity: new Date(),
-            property_number: "teste",
-            property_name: "teste",
-            user_id: userId,
-            _doc: {
-                _id: null,
-                security_number: null,
-                validity: null,
-                property_number: null,
-                property_name: null,
-                user_id: null
-            }
-        });
-    });
-}); */

@@ -1,30 +1,27 @@
+require("../configs/mongoose");
 const Card = require("../models/CardModel");
 const formatObject = require("../utils/formatObject");
-const User = require("../models/UserModel")
-const findAll = async () => {
-    const cards = await Card.find();
+const formatProperties = require("../utils/formatProperties");
 
-    return formatObject(cards);
+const findAll = async () => {
+    const cards = formatObject(await Card.find());
+
+    return cards.map(formatProperties.snakeCaseToCamelCase);
 }
 
 const findOne = async (userId) => {
-    const card = await Card.findOne({ 'user_id': userId });
+    const card = formatObject(await Card.findOne({ 'user_id': userId }));
 
-    return formatObject(card);
+    return formatProperties.snakeCaseToCamelCase(card);
 }
 
 const save = async (cardDto) => {
-    cardDto.userId = (await User.find())[0]._id;
-    cardDto.validity = new Date();
 
-    const card = await Card.create({
-        security_number: cardDto.securityNumber,
-        validity: cardDto.validity,
-        property_name: cardDto.propertyName,
-        user_id: cardDto.userId
-    });
+    cardDto = formatProperties.camelCaseToSnakeCase(cardDto);
 
-    return formatObject(card);
+    const card = formatObject(await Card.create({ ...cardDto }));
+
+    return formatProperties.snakeCaseToCamelCase(card);
 }
 
 module.exports = { findAll, findOne, save };

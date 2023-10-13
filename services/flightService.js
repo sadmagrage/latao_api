@@ -3,41 +3,37 @@ const Flight = require("../models/FlightModel");
 const { uuidToBin } = require("../utils/conversor");
 const reformedFlight = require("../utils/reformedFlight");
 const CustomError = require("../errors/CustomError");
+const formatProperties = require("../utils/formatProperties");
 
 const findAll = async () => {
-    const flights = await Flight.find();
+
+    const flights = formatObject(await Flight.find());
+
+    const reformedFlightObj = await reformedFlight(flights);
     
-    return await reformedFlight(flights);
+    return reformedFlightObj.map(formatProperties.snakeCaseToCamelCase);
 };
 
 const findOne = async (flightId) => {
+
     const flight = await Flight.findOne({ _id: uuidToBin(flightId) });
 
     if (!flight) throw new CustomError("Flight not found.", 404);
 
-    return await reformedFlight(flight);
+    const reformedFlightObj = await reformedFlight(flight);
+
+    return formatProperties.snakeCaseToCamelCase(reformedFlightObj);
 };
 
 const save = async (flightDto) => {
 
-    flightDto.goingDate = new Date();
-    flightDto.returnDate = new Date();
+    flightDto = formatProperties.camelCaseToSnakeCase(flight);
 
-    const flight = await Flight.create({
-        price: flightDto.price,
-        place: flightDto.place,
-        flight_number: flightDto.flightNumber,
-        airport_tag: flightDto.airportTag,
-        company: flightDto.company,
-        bagage_weight: flightDto.bagageWeight,
-        going_date: flightDto.goindDate,
-        return_date: flightDto.returnDate,
-        start_destination_id: flightDto.startDestinationId,
-        final_destination_id: flightDto.finalDestinationId
-    });
-    //ARRUMANDO OS JSON PARA CAMELCASE
-    //USANDO .CREATE AGR
-    return await reformedFlight(flight);
+    const flight = await Flight.create({ ...flightDto });
+    
+    const reformedFlightObj = await reformedFlight(flight);
+
+    return formatProperties.snakeCaseToCamelCase(reformedFlightObj);
 };
 
 module.exports = { findAll, findOne, save };
