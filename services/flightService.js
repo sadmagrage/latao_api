@@ -27,7 +27,7 @@ const findOne = async (flightId) => {
 
 const save = async (flightDto) => {
 
-    flightDto = formatProperties.camelCaseToSnakeCase(flight);
+    flightDto = formatProperties.camelCaseToSnakeCase(flightDto);
 
     const flight = await Flight.create({ ...flightDto });
     

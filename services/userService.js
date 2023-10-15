@@ -5,6 +5,8 @@ require("dotenv").config();
 require("../configs/mongoose");
 const User = require("../models/UserModel");
 const CustomError = require("../errors/CustomError");
+const formatProperties = require("../utils/formatProperties");
+const formatObject = require("../utils/formatObject");
 
 const login = async (userDto) => {
     const user = await User.findOne({ 'cpf': userDto.cpf });
@@ -28,19 +30,11 @@ const register = async (userDto) => {
     
     if (cpfExists) throw new CustomError("CPF already registered", 409);
 
+    userDto = formatProperties.camelCaseToSnakeCase(userDto);
+
     const getHash = await bcrypt.hash(userDto.password, 12);
     
-    const user = new User({ 
-        name: userDto.name,
-        password: getHash,
-        cpf: userDto.cpf,
-        age: userDto.age,
-        address: userDto.address,
-        number: userDto.number,
-        passportNumber: userDto.passportNumber
-    });
-
-    await user.save();
+    const user = await User.create({ ...userDto, password: getHash });
 
     const token = jwt.sign({ cpf: user.cpf }, process.env.PRIVATE_KEY, { expiresIn: "1h" });
 
@@ -54,17 +48,13 @@ const data = async (token) => {
         return decoded.cpf;
     });
 
-    const user = await User.findOne({ 'cpf': cpf });
+    let user = formatObject(await User.findOne({ 'cpf': cpf }));
 
-    return {
-        user_id: user._id,
-        name: user.name,
-        cpf: user.cpf,
-        age: user.age,
-        address: user.address,
-        number: user.number,
-        passport_number: user.passport_number
-    };
+    user = formatProperties.snakeCaseToCamelCase(user);
+
+    delete user.password;
+
+    return user;
 };
 
 module.exports = { login, register, data};

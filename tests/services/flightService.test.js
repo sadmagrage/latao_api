@@ -1,9 +1,8 @@
 const flightService = require("../../services/flightService");
 const Flight = require("../../models/FlightModel");
-const formatObject = require("../../utils/formatObject");
 const reformedFlight = require("../../utils/reformedFlight");
-
-jest.mock("../../utils/formatObject", () => jest.fn());
+const { uuidToBin } = require("../../utils/conversor");
+const formatProperties = require("../../utils/formatProperties");
 
 jest.mock("../../utils/reformedFlight", () => jest.fn());
 
@@ -11,6 +10,11 @@ jest.mock("../../models/FlightModel", () => ({
     find: jest.fn(),
     findOne: jest.fn(),
     create: jest.fn()
+}));
+
+jest.mock("../../utils/formatProperties", () => ({
+    camelCaseToSnakeCase: jest.fn(),
+    snakeCaseToCamelCase: jest.fn()
 }));
 
 describe("flightService", () => {
@@ -80,19 +84,45 @@ describe("flightService", () => {
         
         Flight.find.mockResolvedValue([ flightSnakeCase ]);
         reformedFlight.mockResolvedValue([ afterReformedFlightSnakeCase ]);
+        formatProperties.snakeCaseToCamelCase.mockReturnValue( afterReformedFlightCamelCase );
 
         const response = await flightService.findAll();
         
         expect(Flight.find).toHaveBeenCalled();
         expect(reformedFlight).toHaveBeenCalledWith([ flightSnakeCase ]);
+        expect(formatProperties.snakeCaseToCamelCase).toHaveBeenCalled();
         expect(response).toEqual([ afterReformedFlightCamelCase ]);
     });
 
-    /* test("findOne", async () => {
+    test("findOne", async () => {
 
+        Flight.findOne.mockResolvedValue(flightSnakeCase);
+        reformedFlight.mockResolvedValue(afterReformedFlightSnakeCase);
+        formatProperties.snakeCaseToCamelCase.mockReturnValue( afterReformedFlightCamelCase );
+
+        const flightId = "flightId";
+
+        const response = await flightService.findOne(flightId);
+
+        expect(Flight.findOne).toHaveBeenCalledWith({ _id: uuidToBin(flightId) });
+        expect(reformedFlight).toHaveBeenCalledWith(flightSnakeCase);
+        expect(formatProperties.snakeCaseToCamelCase).toHaveBeenCalledWith(afterReformedFlightSnakeCase);
+        expect(response).toEqual(afterReformedFlightCamelCase);
     });
 
     test("save", async () => {
 
-    }); */
+        formatProperties.camelCaseToSnakeCase.mockReturnValue(flightSnakeCase);
+        Flight.create.mockResolvedValue(flightSnakeCase);
+        reformedFlight.mockResolvedValue(afterReformedFlightSnakeCase);
+        formatProperties.snakeCaseToCamelCase(afterReformedFlightCamelCase);
+
+        const response = await flightService.save(flightCamelCase);
+
+        expect(formatProperties.camelCaseToSnakeCase).toHaveBeenCalledWith(flightCamelCase);
+        expect(Flight.create).toHaveBeenCalledWith({ ...flightSnakeCase });
+        expect(reformedFlight).toHaveBeenCalledWith(flightSnakeCase);
+        expect(formatProperties.snakeCaseToCamelCase).toHaveBeenCalledWith(afterReformedFlightSnakeCase);
+        expect(response).toEqual(afterReformedFlightCamelCase);
+    });
 });
