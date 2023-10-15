@@ -127,7 +127,7 @@ describe("userService", () => {
         const userWithoutPassword = {};
         
         Object.keys(userCamelCase).map(prop => {
-            if (prop != 'password') userWithoutPassword[prop] = userSnakeCase[prop];
+            if (prop != 'password') userWithoutPassword[prop] = userCamelCase[prop];
         });
 
         const response = await userService.data("token");

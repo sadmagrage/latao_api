@@ -10,6 +10,8 @@ jest.mock("../../models/CardModel", () => ({
     create: jest.fn(),
 }));
 
+jest.mock("../../configs/mongoose", () => jest.fn());
+
 describe("cardService", () => {
 
     const cardCamelCase = {

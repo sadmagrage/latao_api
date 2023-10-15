@@ -1,3 +1,4 @@
+require("../configs/mongoose");
 const Destination = require("../models/DestinationModel");
 const formatObject = require("../utils/formatObject");
 const formatProperties = require("../utils/formatProperties");

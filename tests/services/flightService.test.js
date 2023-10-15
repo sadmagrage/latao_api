@@ -17,6 +17,8 @@ jest.mock("../../utils/formatProperties", () => ({
     snakeCaseToCamelCase: jest.fn()
 }));
 
+jest.mock("../../configs/mongoose", () => jest.fn());
+
 describe("flightService", () => {
 
     const flightCamelCase = {

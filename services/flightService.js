@@ -1,4 +1,4 @@
-//require("../configs/mongoose");
+require("../configs/mongoose");
 const Flight = require("../models/FlightModel");
 const { uuidToBin } = require("../utils/conversor");
 const reformedFlight = require("../utils/reformedFlight");
