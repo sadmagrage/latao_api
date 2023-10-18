@@ -11,7 +11,10 @@ jest.mock("../../controllers/cardController", () => ({
 }));
 
 const cardMock = {
-
+    "securityNumber": "securityNumber",
+    "validity": "validity",
+    "propertyName": "propertyName",
+    "userId": "userId"
 };
 
 describe("cardRoute", () => {
@@ -22,7 +25,7 @@ describe("cardRoute", () => {
             res.status(200).json([ cardMock ]);
         });
 
-        const response = await request(app).get("/card", cardController.findAll);
+        const response = await request(app).get("/card");
 
         expect(response.status).toBe(200);
         expect(response.body).toEqual([ cardMock ]);
@@ -34,12 +37,11 @@ describe("cardRoute", () => {
 
         cardController.findOne.mockImplementation(async (req, res) => {
 
-            console.log(req.params);
             param = req.params.userId;
             res.status(200).json(cardMock);
         });
 
-        const response = await request(app).get("/card/userId", cardController.findOne);
+        const response = await request(app).get("/card/userId");
 
         expect(response.status).toBe(200);
         expect(response.body).toEqual(cardMock);
@@ -49,10 +51,10 @@ describe("cardRoute", () => {
     test("save", async () => {
 
         cardController.save.mockImplementation(async (req, res) => {
-            res.status(201).json(cardMock);
+            res.status(201).json(req.body);
         });
 
-        const response = await request(app).post("/card", cardController.save).send(cardMock);
+        const response = await request(app).post("/card").send(cardMock);
 
         expect(response.status).toBe(201);
         expect(response.body).toEqual(cardMock);

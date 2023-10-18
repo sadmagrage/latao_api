@@ -8,17 +8,17 @@ jest.mock("../../controllers/flightController", () => ({
     findAll: jest.fn(),
     findOne: jest.fn(),
     save: jest.fn()
-}))
+}));
 
 const flightMock = {
-    "price": "teste",
-    "place": ["teste"],
+    "price": "price",
+    "place": ["place"],
     "flightNumber": 0,
-    "airportTag": "teste",
-    "company": "teste",
-    "bagageWeight": "teste",
-    "goingDate": "data",
-    "returnDate": "data"
+    "airportTag": "airportTag",
+    "company": "company",
+    "bagageWeight": "bagageWeight",
+    "goingDate": "goingDate",
+    "returnDate": "returnDate"
 }
 
 describe("flightRoute", () => {
@@ -29,7 +29,7 @@ describe("flightRoute", () => {
             res.status(200).json([ flightMock ]);
         });
 
-        const response = await request(app).get("/flight", flightController.findAll);
+        const response = await request(app).get("/flight");
         
         expect(response.status).toBe(200);
         expect(response.body).toEqual([ flightMock ]);
@@ -44,7 +44,7 @@ describe("flightRoute", () => {
             res.status(200).json(flightMock);
         });
 
-        const response = await request(app).get("/flight/flightId", flightController.findOne);
+        const response = await request(app).get("/flight/flightId");
 
         expect(response.status).toBe(200);
         expect(response.body).toEqual(flightMock);
@@ -57,7 +57,7 @@ describe("flightRoute", () => {
             res.status(201).json(req.body);
         });
 
-        const response = await request(app).post("/flight", flightController.save).send(flightMock);
+        const response = await request(app).post("/flight").send(flightMock);
         
         expect(response.status).toBe(201);
         expect(response.body).toEqual(flightMock);

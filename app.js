@@ -14,6 +14,6 @@ app.use("/card", cardRoute);
 
 const port = 3000;
 
-app.listen(port, () => console.log(`Rodando na porta ${ port }`));
+if (process.env.NODE_ENV !== "test") app.listen(port, () => console.log(`Rodando na porta ${ port }`));
 
 module.exports = app;
