@@ -7,7 +7,7 @@ const route = express.Router();
 route.use(express.json());
 
 route.get("/", cardController.findAll);
-route.get("/cardId", cardController.findOne);
+route.get("/:userId", cardController.findOne);
 route.post("/", cardController.save);
 
 module.exports = route;
