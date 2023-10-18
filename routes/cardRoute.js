@@ -6,8 +6,10 @@ const route = express.Router();
 
 route.use(express.json());
 
-route.get("/", cardController.findAll);
-route.get("/:userId", cardController.findOne);
-route.post("/", cardController.save);
+route.get("/:userId", cardController.findAll);
+route.get("/:userId/:cardId", cardController.findOne);
+route.post("/:userId", cardController.save);
+route.put("/:userId/:cardId", cardController.update);
+route.delete("/:userId/:cardId", cardController.del);
 
 module.exports = route;
