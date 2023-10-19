@@ -36,13 +36,13 @@ const save = async (destinationDto) => {
 
 const update = async (destinationDto, destinationId) => {
 
-    const destinationExists = await Destination.findOne({ 'destination_id': destinationId });
+    const destinationExists = await Destination.findOne({ '_id': uuidToBin(destinationId) });
 
     if (!destinationExists) throw new CustomError("Destination not found", 404);
 
     destinationDto = formatProperties.camelCaseToSnakeCase(destinationDto);
 
-    const destination = formatObject(await Destination.findOneAndUpdate({ 'destination_id': uuidToBin(destinationId) }, { ...destinationDto }, { new: true }));
+    const destination = formatObject(await Destination.findOneAndUpdate({ '_id': uuidToBin(destinationId) }, { ...destinationDto }, { new: true }));
 
     const camelCaseDestination = formatProperties.snakeCaseToCamelCase(destination);
     
@@ -51,11 +51,11 @@ const update = async (destinationDto, destinationId) => {
 
 const del = async (destinationId) => {
 
-    const destinationExists = await Destination.findOne({ 'destination_id': destinationId });
+    const destinationExists = await Destination.findOne({ '_id': uuidToBin(destinationId) });
 
     if (!destinationExists) throw new CustomError("Destination not found", 404);
 
-    await Destination.findOneAndDelete({ 'destination_id': uuidToBin(destinationId) });
+    await Destination.findOneAndDelete({ '_id': uuidToBin(destinationId) });
 
     return "Destination deleted sucessfully";
 };

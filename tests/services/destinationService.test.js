@@ -27,6 +27,8 @@ jest.mock("../../configs/mongoose", () => jest.fn());
 
 describe("destinationService", () => {
 
+    beforeEach(() => jest.clearAllMocks());
+
     const destinationCamelCase = {
         "_id": "_id",
         "cityName": "city name",
@@ -108,6 +110,13 @@ describe("destinationService", () => {
     });
 
     test("delete", async () => {
+        Destination.findOne.mockResolvedValue(destinationSnakeCase);
+        Destination.findOneAndDelete.mockImplementation(() => {});
+        
+        const message = await destinationService.del("destinationId");
 
+        expect(Destination.findOne).toHaveBeenCalledWith({ '_id': uuidToBin("destinationId") });
+        expect(Destination.findOneAndDelete).toHaveBeenCalledWith({ '_id': uuidToBin("destinationId") });
+        expect(message).toBe("Destination deleted sucessfully");
     });
 });
