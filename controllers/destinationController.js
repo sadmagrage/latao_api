@@ -45,4 +45,36 @@ const save = async (req, res) => {
     }
 }
 
-module.exports = { findAll, findOne, save };
+const update = async (req, res) => {
+    try {
+        const { destinationId } = req.params;
+
+        const destination = await destinationService.update(req.body, destinationId);
+
+        res.status(200).json(destination);
+    } catch (error) {
+        if (error instanceof CustomError) {
+            res.status(error.status).json(error.message);
+            return;
+        }
+        res.status(500).json(error.message);
+    }
+};
+
+const del = async (req, res) => {
+    try {
+        const { destinationId } = req.params;
+
+        await destinationService.del(destinationId);
+        
+        res.status(200).json("Destination deleted sucessfully");
+    } catch (error) {
+        if (error instanceof CustomError) {
+            res.status(error.status).json(error.message);
+            return;
+        }
+        res.status(500).json(error.message);
+    }
+};
+
+module.exports = { findAll, findOne, save, update, del };

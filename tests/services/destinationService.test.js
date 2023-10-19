@@ -7,7 +7,9 @@ const formatProperties = require("../../utils/formatProperties");
 jest.mock("../../models/DestinationModel", () => ({
     find: jest.fn(),
     findOne: jest.fn(),
-    create: jest.fn()
+    create: jest.fn(),
+    findOneAndUpdate: jest.fn(),
+    findOneAndDelete: jest.fn()
 }));
 
 jest.mock("../../utils/formatObject", () => jest.fn());
@@ -26,19 +28,19 @@ jest.mock("../../configs/mongoose", () => jest.fn());
 describe("destinationService", () => {
 
     const destinationCamelCase = {
-        "_id": "",
-        "cityName": "",
-        "zipcode": "",
-        "cityTag": "",
-        "country": ""
+        "_id": "_id",
+        "cityName": "city name",
+        "zipcode": "zipcode",
+        "cityTag": "city tag",
+        "country": "country"
     };
 
     const destinationSnakeCase = {
-        "_id": "",
-        "city_name": "",
-        "zipcode": "",
-        "city_tag": "",
-        "country": ""
+        "_id": "_id",
+        "city_name": "city name",
+        "zipcode": "zipcode",
+        "city_tag": "city tag",
+        "country": "country"
     };
 
     test("findAll", async () => {
@@ -85,5 +87,27 @@ describe("destinationService", () => {
         expect(formatObject).toHaveBeenCalledWith(destinationSnakeCase);
         expect(formatProperties.snakeCaseToCamelCase).toHaveBeenCalledWith(destinationSnakeCase);
         expect(response).toEqual(destinationCamelCase);
+    });
+
+    test("update", async () => {
+
+        Destination.findOne.mockResolvedValue(destinationSnakeCase);
+        formatProperties.camelCaseToSnakeCase.mockReturnValue(destinationSnakeCase);
+        Destination.findOneAndUpdate.mockResolvedValue(destinationSnakeCase);
+        formatObject.mockReturnValue(destinationSnakeCase);
+        formatProperties.snakeCaseToCamelCase(destinationCamelCase);
+
+        const response = await destinationService.update(destinationCamelCase, "destinationId");
+
+        expect(Destination.findOne).toHaveBeenCalledWith({ "_id": uuidToBin("destinationId") });
+        expect(formatProperties.camelCaseToSnakeCase).toHaveBeenCalledWith(destinationCamelCase);
+        expect(Destination.findOneAndUpdate).toHaveBeenCalledWith({ "_id": uuidToBin("destinationId") }, { ...destinationSnakeCase }, { new: true });
+        expect(formatObject).toHaveBeenCalledWith(destinationSnakeCase);
+        expect(formatProperties.snakeCaseToCamelCase).toHaveBeenCalledWith(destinationSnakeCase);
+        expect(response).toEqual(destinationCamelCase);
+    });
+
+    test("delete", async () => {
+
     });
 });
