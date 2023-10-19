@@ -69,7 +69,9 @@ const del = async (req, res) => {
     try {
         const { userId, cardId } = req.params;
 
-        await cardService.del(userId, cardId)
+        const message = await cardService.del(userId, cardId);
+
+        res.status(200).json(message);
     } catch (error) {
         if (error instanceof CustomError) {
             res.status(error.status).json(error.message);
