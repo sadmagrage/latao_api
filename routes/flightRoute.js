@@ -10,5 +10,7 @@ route.use(bodyParser.json());
 route.get("/", flightController.findAll);
 route.get("/:flightId", flightController.findOne);
 route.post("/", flightController.save);
+route.put("/:flightId", flightController.update);
+route.delete("/:flightId", flightController.del);
 
 module.exports = route;

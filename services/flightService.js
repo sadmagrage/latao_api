@@ -36,4 +36,30 @@ const save = async (flightDto) => {
     return formatProperties.snakeCaseToCamelCase(reformedFlightObj);
 };
 
-module.exports = { findAll, findOne, save };
+const update = async (flightDto, flightId) => {
+
+    const flightExists = await Flight.findOne({ "_id": uuidToBin(flightId) });
+
+    if (!flightExists) throw new CustomError("Flight not found.", 404);
+
+    flightDto = formatProperties.camelCaseToSnakeCase(flightDto);
+
+    const flight = await Flight.findOneAndUpdate({ "_id": uuidToBin(flightId) }, { ...flightDto }, { new: true });
+
+    const reformedFlightObj = await reformedFlight(flight);
+
+    return formatProperties.snakeCaseToCamelCase(reformedFlightObj);
+};
+
+const del = async (flightId) => {
+
+    const flightExists = await Flight.findOne({ "_id": uuidToBin(flightId) });
+
+    if (!flightExists) throw new CustomError("Flight not found.", 404);
+
+    await Flight.findOneAndDelete({ "_id": uuidToBin(flightId) });
+
+    return "Flight deleted sucessfully.";
+};
+
+module.exports = { findAll, findOne, save, update, del };

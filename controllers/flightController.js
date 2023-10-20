@@ -45,4 +45,36 @@ const save = async (req, res) => {
     }
 };
 
-module.exports = { findAll, findOne, save };
+const update = async (req, res) => {
+    try {
+        const { flightId } = req.params;
+
+        const flight = await flightService.update(req.body, flightId);
+
+        res.status(200).json(flight);
+    } catch (error) {
+        if (error instanceof CustomError) {
+            res.status(error.status).json(error.message);
+            return;
+        }
+        res.status(500).json(error.message);
+    }
+};
+
+const del = async (req, res) => {
+    try {
+        const { flightId } = req.params;
+
+        const message = await flightService.del(flightId);
+
+        res.status(200).json(message);
+    } catch (error) {
+        if (error instanceof CustomError) {
+            res.status(error.status).json(error.message);
+            return;
+        }
+        res.status(500).json(error.message);
+    }
+};
+
+module.exports = { findAll, findOne, save, update, del };

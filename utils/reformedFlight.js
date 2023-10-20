@@ -1,5 +1,4 @@
-const Destination = require("../models/DestinationModel");
-const { uuidToBin } = require("./conversor");
+const { findOne } = require("../services/destinationService");
 const formatObject = require("./formatObject");
 
 const reformedFlight = async (flightObj) => {
@@ -15,8 +14,8 @@ const reformedFlight = async (flightObj) => {
             }
         });
     
-        reformedFlight["start_destination"] = formatObject(await Destination.findOne({ '_id': uuidToBin(flight.start_destination_id) }));
-        reformedFlight["final_destination"] = formatObject(await Destination.findOne({ '_id': uuidToBin(flight.final_destination_id) }));
+        reformedFlight["start_destination"] = await findOne(flight.start_destination_id);
+        reformedFlight["final_destination"] = await findOne(flight.final_destination_id);
         
         return reformedFlight;
     }

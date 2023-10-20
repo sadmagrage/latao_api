@@ -1,7 +1,10 @@
+const { v4 } = require("uuid");
+
 const cardService = require("../../services/cardService");
 const Card = require("../../models/CardModel");
 const formatObject = require("../../utils/formatObject");
 const formatProperties = require("../../utils/formatProperties");
+const { uuidToBin } = require("../../utils/conversor");
 
 jest.mock("../../utils/formatObject", () => jest.fn());
 
@@ -11,6 +14,11 @@ jest.mock("../../models/CardModel", () => ({
     create: jest.fn(),
     findOneAndUpdate: jest.fn(),
     findOneAndDelete: jest.fn()
+}));
+
+jest.mock("../../utils/formatProperties", () => ({
+    snakeCaseToCamelCase: jest.fn(),
+    camelCaseToSnakeCase: jest.fn()
 }));
 
 jest.mock("../../configs/mongoose", () => jest.fn());
@@ -69,15 +77,19 @@ describe("cardService", () => {
 
         Card.findOne.mockResolvedValue(cardSnakeCase);
 
-        const cardId = "id";
-        const card = await Card.findOne(cardId);
+        const cardId = v4();
+        const userId = v4();
+        
+        const card = await Card.findOne({ 'user_id': userId, '_id': uuidToBin(cardId) });
 
         formatObject.mockReturnValue(card);
+        formatProperties.snakeCaseToCamelCase.mockReturnValue(card);
 
-        await cardService.findOne(cardId);
+        await cardService.findOne(userId, cardId);
 
-        expect(Card.findOne).toHaveBeenCalledWith(cardId);
+        expect(Card.findOne).toHaveBeenCalledWith({ 'user_id': userId, '_id': uuidToBin(cardId) });
         expect(formatObject).toHaveBeenCalledWith(card);
+        expect(formatProperties.snakeCaseToCamelCase).toHaveBeenCalledWith(card);
     });
 
     test("cardService save", async () => {
@@ -92,19 +104,27 @@ describe("cardService", () => {
 
     test("cardService update", async () => {
 
+        const cardId = "cardId";
+        const userId = "userId";
+
         Card.findOneAndUpdate.mockResolvedValue(cardSnakeCase);
+        formatObject.mockReturnValue(cardSnakeCase);
 
-        const response = await cardService.update(cardCamelCase, "userId", "cardId");
+        const card = await cardService.update(cardCamelCase, userId, cardId);
 
-        expect(Card.findOneAndUpdate).toHaveBeenCalledWith({ 'user_id': "userId", 'card_id': "cardId" }, { ...formatProperties.camelCaseToSnakeCase(cardCamelCase) }, { new: true });
-        expect(response).toEqual(formatProperties.snakeCaseToCamelCase(cardSnakeCase));
+        expect(Card.findOneAndUpdate).toHaveBeenCalledWith({ 'user_id': "userId", '_id': uuidToBin("cardId") }, { ...formatProperties.camelCaseToSnakeCase(cardCamelCase) }, { new: true });
+        expect(formatObject).toHaveBeenCalledWith(await Card.findOneAndUpdate({ 'user_id': "userId", '_id': uuidToBin("cardId") }, { ...formatProperties.camelCaseToSnakeCase(cardCamelCase) }, { new: true }));
+        expect(card).toEqual(formatProperties.snakeCaseToCamelCase(cardSnakeCase));
     });
 
     test("cardService delete", async () => {
 
+        Card.findOne.mockResolvedValue(cardSnakeCase);
+        Card.findOneAndDelete.mockImplementation(() => {});
+
         const response = await cardService.del("userId", "cardId");
 
-        expect(Card.findOneAndDelete).toHaveBeenCalledWith({ 'user_id': "userId", 'card_id': "cardId" });
+        expect(Card.findOneAndDelete).toHaveBeenCalledWith({ 'user_id': "userId", '_id': uuidToBin("cardId") });
         expect(response).toBe("Card deleted sucessfully");
     });
 });

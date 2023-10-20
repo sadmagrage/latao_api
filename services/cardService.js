@@ -2,6 +2,7 @@ require("../configs/mongoose");
 const CustomError = require("../errors/CustomError");
 const Card = require("../models/CardModel");
 const formatObject = require("../utils/formatObject");
+const { uuidToBin } = require("../utils/conversor");
 const formatProperties = require("../utils/formatProperties");
 
 const findAll = async (userId) => {
@@ -11,7 +12,7 @@ const findAll = async (userId) => {
 }
 
 const findOne = async (userId, cardId) => {
-    const card = formatObject(await Card.findOne({ 'user_id': userId, '_id': cardId }));
+    const card = formatObject(await Card.findOne({ 'user_id': userId, '_id': uuidToBin(cardId) }));
 
     if (!card) throw new CustomError("Card not exists", 404);
 
@@ -29,7 +30,7 @@ const save = async (cardDto, userId) => {
 }
 
 const update = async (cardDto, userId, cardId) => {
-    const cardExists = await Card.findOne({ 'user_id': userId, 'card_id': cardId });
+    const cardExists = await Card.findOne({ 'user_id': userId, '_id': uuidToBin(cardId) });
 
     if (!cardExists) throw new CustomError("Card not exists", 404);
     
@@ -37,17 +38,17 @@ const update = async (cardDto, userId, cardId) => {
     
     cardDto = formatProperties.camelCaseToSnakeCase(cardDto);
     
-    const card = formatObject(await Card.findOneAndUpdate({ 'user_id': userId, 'card_id': cardId }, { ...cardDto }, { new: true }));
+    const card = formatObject(await Card.findOneAndUpdate({ 'user_id': userId, '_id': uuidToBin(cardId) }, { ...cardDto }, { new: true }));
 
     return formatProperties.snakeCaseToCamelCase(card);
 }
 
 const del = async (userId, cardId) => {
-    const cardExists = await Card.findOne({ 'user_id': userId, 'card_id': cardId });
+    const cardExists = await Card.findOne({ 'user_id': userId, '_id': uuidToBin(cardId) });
 
     if (!cardExists) throw new CustomError("Card not exists", 404);
 
-    await Card.findOneAndDelete({ 'user_id': userId, 'card_id': cardId });
+    await Card.findOneAndDelete({ 'user_id': userId, '_id': uuidToBin(cardId) });
 
     return "Card deleted sucessfully";
 }
