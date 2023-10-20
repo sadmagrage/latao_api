@@ -112,19 +112,23 @@ describe("cardService", () => {
 
         const card = await cardService.update(cardCamelCase, userId, cardId);
 
-        expect(Card.findOneAndUpdate).toHaveBeenCalledWith({ 'user_id': "userId", '_id': uuidToBin("cardId") }, { ...formatProperties.camelCaseToSnakeCase(cardCamelCase) }, { new: true });
-        expect(formatObject).toHaveBeenCalledWith(await Card.findOneAndUpdate({ 'user_id': "userId", '_id': uuidToBin("cardId") }, { ...formatProperties.camelCaseToSnakeCase(cardCamelCase) }, { new: true }));
+        expect(Card.findOneAndUpdate).toHaveBeenCalledWith({ 'user_id': userId, '_id': uuidToBin("cardId") }, { ...formatProperties.camelCaseToSnakeCase(cardCamelCase) }, { new: true });
+        expect(formatObject).toHaveBeenCalledWith(await Card.findOneAndUpdate({ 'user_id': userId, '_id': uuidToBin("cardId") }, { ...formatProperties.camelCaseToSnakeCase(cardCamelCase) }, { new: true }));
         expect(card).toEqual(formatProperties.snakeCaseToCamelCase(cardSnakeCase));
     });
 
     test("cardService delete", async () => {
 
+        const userId = "userId";
+        const cardId = "cardId";
+
         Card.findOne.mockResolvedValue(cardSnakeCase);
         Card.findOneAndDelete.mockImplementation(() => {});
 
-        const response = await cardService.del("userId", "cardId");
+        const response = await cardService.del(userId, cardId);
 
-        expect(Card.findOneAndDelete).toHaveBeenCalledWith({ 'user_id': "userId", '_id': uuidToBin("cardId") });
+        expect(Card.findOne).toHaveBeenCalledWith({ 'user_id': userId, "_id": uuidToBin(cardId) });
+        expect(Card.findOneAndDelete).toHaveBeenCalledWith({ 'user_id': userId, '_id': uuidToBin(cardId) });
         expect(response).toBe("Card deleted sucessfully");
     });
 });

@@ -43,4 +43,32 @@ const data = async (req, res) => {
     }
 };
 
-module.exports = { login, register, data };
+const update = async (req, res) => {
+    try {
+        const user = await userService.update(req.header("Authorization"));
+
+        res.status(200).json(user);
+    } catch (error) {
+        if (error instanceof CustomError) {
+            res.status(error.status).json(error.message);
+            return
+        }
+        res.status(500).json(error.message);
+    }
+};
+
+const del = async (req, res) => {
+    try {
+        const message = await userService.del(req.body, req.header("Authorization"));
+
+        res.status(200).json(message);
+    } catch (error) {
+        if (error instanceof CustomError) {
+            res.status(error.status).json(error.message);
+            return
+        }
+        res.status(500).json(error.message);
+    }
+};
+
+module.exports = { login, register, data, update, del };

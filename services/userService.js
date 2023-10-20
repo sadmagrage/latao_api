@@ -57,4 +57,44 @@ const data = async (token) => {
     return user;
 };
 
-module.exports = { login, register, data};
+const update = async (userDto, token) => {
+    const cpf = await jwt.verify(token, process.env.PRIVATE_KEY, (err, decoded) => {
+        if (err) throw new CustomError(err.message, 401);
+
+        return decoded.cpf;
+    });
+
+    const userExists = await User.findOne({ 'cpf': cpf });
+
+    if (!userExists) throw new CustomError("User not found", 404);
+
+    const getHash = await bcrypt.hash(userDto.password, 12);
+
+    userDto.password = getHash;
+
+    userDto = formatProperties.camelCaseToSnakeCase(userDto);
+
+    const user = formatObject(User.findOneAndUpdate({ 'cpf': cpf }, { ...userDto }, { new: true }));
+
+    const userCamelCase = formatProperties.snakeCaseToCamelCase(user);
+
+    return userCamelCase;
+};
+
+const del = async (token) => {
+    const cpf = await jwt.verify(token, process.env.PRIVATE_KEY, (err, decoded) => {
+        if (err) throw new CustomError(err.message, 401);
+
+        return decoded.cpf;
+    });
+
+    const user = await User.findOne({ 'cpf': cpf });
+
+    if (!user) throw new CustomError("User not found", 404);
+
+    await User.findOneAndDelete({ 'cpf': user.cpf });
+
+    return "User deleted sucessfully";
+};
+
+module.exports = { login, register, data, update, del };

@@ -7,7 +7,9 @@ const userService = require("../../services/userService");
 jest.mock("../../services/userService", () => ({
     login: jest.fn(),
     register: jest.fn(),
-    data: jest.fn()
+    data: jest.fn(),
+    update: jest.fn(),
+    del: jest.fn()
 }));
 
 describe("userController login", () => {
@@ -186,3 +188,5 @@ describe("userController data", () => {
         expect(res.json).toHaveBeenCalledWith(errorMessage);
     });
 });
+
+describe("userController ")

@@ -9,7 +9,9 @@ jest.mock("../../utils/reformedFlight", () => jest.fn());
 jest.mock("../../models/FlightModel", () => ({
     find: jest.fn(),
     findOne: jest.fn(),
-    create: jest.fn()
+    create: jest.fn(),
+    findOneAndUpdate: jest.fn(),
+    findOneAndDelete: jest.fn()
 }));
 
 jest.mock("../../utils/formatProperties", () => ({
@@ -22,63 +24,63 @@ jest.mock("../../configs/mongoose", () => jest.fn());
 describe("flightService", () => {
 
     const flightCamelCase = {
-        "_id": "",
-        "price": "",
-        "place": "",
-        "flightNumber": "",
-        "airportTag": "",
-        "company": "",
-        "bagageWeight": "",
-        "goingDate": "",
-        "returnDate": "",
-        "startDestinationId": "",
-        "finalDestinationId": ""
+        "_id": "_id",
+        "price": "price",
+        "place": "place",
+        "flightNumber": "flight number",
+        "airportTag": "airport tag",
+        "company": "company",
+        "bagageWeight": "bagage weight",
+        "goingDate": "going date",
+        "returnDate": "going date",
+        "startDestinationId": "start destination id",
+        "finalDestinationId": "final destination id"
     };
 
     const flightSnakeCase = {
-        "_id": "",
-        "price": "",
-        "place": "",
-        "flight_number": "",
-        "airport_tag": "",
-        "company": "",
-        "bagage_weight": "",
-        "going_date": "",
-        "return_date": "",
-        "start_destination_id": "",
-        "final_destination_id": ""
+        "_id": "_id",
+        "price": "price",
+        "place": "place",
+        "flight_number": "flight number",
+        "airport_tag": "airport tag",
+        "company": "company",
+        "bagage_weight": "bagage weight",
+        "going_date": "going date",
+        "return_date": "return date",
+        "start_destination_id": "start destination id",
+        "final_destination_id": "final destination id"
     };
 
     const afterReformedFlightSnakeCase = {
-        "_id": "",
-        "price": "",
-        "place": "",
-        "flight_number": "",
-        "airport_tag": "",
-        "company": "",
-        "bagage_weight": "",
-        "going_date": "",
-        "return_date": "",
-        "start_destination_id": "",
-        "final_destination_id": "",
-        "start_destination": "",
-        "final_destination": ""
+        "_id": "_id",
+        "price": "price",
+        "place": "place",
+        "flight_number": "flight number",
+        "airport_tag": "airport tag",
+        "company": "company",
+        "bagage_weight": "bagage weight",
+        "going_date": "going date",
+        "return_date": "return date",
+        "start_destination_id": "start destination id",
+        "final_destination_id": "final destination id",
+        "start_destination": "start destination",
+        "final_destination": "final destination"
     };
 
     const afterReformedFlightCamelCase = {
-        "_id": "",
-        "price": "",
-        "place": "",
-        "flightNumber": "",
-        "airportTag": "",
-        "company": "",
-        "bagageWeight": "",
-        "goingDate": "",
-        "returnDate": "",
-        "startDestinationId": "",
-        "finalDestinationId": "",
-        "startDestination": "",
-        "finalDestination": ""
+        "_id": "_id",
+        "price": "price",
+        "place": "place",
+        "flightNumber": "flight number",
+        "airportTag": "airport tag",
+        "company": "company",
+        "bagageWeight": "bagage weight",
+        "goingDate": "going date",
+        "returnDate": "return date",
+        "startDestinationId": "start destination id",
+        "finalDestinationId": "final destination id",
+        "startDestination": "start destination",
+        "finalDestination": "final destination"
     }
 
 
@@ -126,5 +128,39 @@ describe("flightService", () => {
         expect(reformedFlight).toHaveBeenCalledWith(flightSnakeCase);
         expect(formatProperties.snakeCaseToCamelCase).toHaveBeenCalledWith(afterReformedFlightSnakeCase);
         expect(response).toEqual(afterReformedFlightCamelCase);
+    });
+
+    test("update", async () => {
+
+        const flightId = "flightId";
+
+        Flight.findOne.mockResolvedValue(flightSnakeCase);
+        formatProperties.camelCaseToSnakeCase.mockReturnValue(flightSnakeCase);
+        Flight.findOneAndUpdate.mockResolvedValue(flightSnakeCase);
+        reformedFlight.mockResolvedValue(afterReformedFlightSnakeCase);
+        formatProperties.snakeCaseToCamelCase.mockReturnValue(afterReformedFlightCamelCase);
+
+        const response = await flightService.update(flightCamelCase, "flightId");
+
+        expect(Flight.findOne).toHaveBeenCalledWith({ '_id': uuidToBin(flightId) });
+        expect(formatProperties.camelCaseToSnakeCase).toHaveBeenCalledWith(flightCamelCase);
+        expect(Flight.findOneAndUpdate).toHaveBeenCalledWith({ '_id': uuidToBin(flightId) }, { ...flightSnakeCase }, { new: true });
+        expect(reformedFlight).toHaveBeenCalledWith(flightSnakeCase);
+        expect(formatProperties.snakeCaseToCamelCase).toHaveBeenCalledWith(afterReformedFlightCamelCase);
+        expect(response).toEqual(afterReformedFlightCamelCase);
+    });
+
+    test("delete" , async () => {
+
+        const flightId = "flightId";
+
+        Flight.findOne.mockResolvedValue(flightSnakeCase);
+        Flight.findOneAndDelete.mockImplementation(() => {});
+
+        const message = await flightService.del(flightId);
+
+        expect(Flight.findOne).toHaveBeenCalledWith({ '_id': uuidToBin(flightId) });
+        expect(Flight.findOneAndDelete).toHaveBeenCalledWith({ '_id': uuidToBin(flightId) });
+        expect(message).toBe("Flight deleted sucessfully.");
     });
 });

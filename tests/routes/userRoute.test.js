@@ -7,7 +7,9 @@ jest.mock("../../configs/mongoose", () => jest.fn());
 jest.mock("../../controllers/userController", () => ({
     login: jest.fn(),
     register: jest.fn(),
-    data: jest.fn()
+    data: jest.fn(),
+    update: jest.fn(),
+    del: jest.fn()
 }));
 
 const userMock = {
@@ -66,6 +68,38 @@ describe("userRoute", () => {
 
         expect(response.status).toBe(200);
         expect(response.body).toEqual(userMock);
+        expect(tokenReceived).toBe("token");
+    });
+
+    test("update", async () => {
+
+        let tokenReceived = "";
+
+        userController.update.mockImplementation(async (req, res) => {
+            tokenReceived = req.header("Authorization");
+            res.status(200).json(req.body);
+        });
+
+        const response = await request(app).put("/user/update").send(userMock).set('Authorization', "token");
+
+        expect(response.status).toBe(200);
+        expect(response.body).toEqual(userMock);
+        expect(tokenReceived).toBe("token");
+    });
+
+    test("delete", async () => {
+
+        let tokenReceived = "";
+
+        userController.del.mockImplementation(async (req, res) => {
+            tokenReceived = req.header("Authorization");
+            res.status(200).json("User deleted sucessfully");
+        });
+
+        const response = await request(app).del("/user/delete").send(userMock).set('Authorization', "token");
+
+        expect(response.status).toBe(200);
+        expect(response.body).toBe("User deleted sucessfully");
         expect(tokenReceived).toBe("token");
     });
 });

@@ -11,6 +11,8 @@ jest.mock("../../models/DestinationModel", () => ({
 
 jest.mock("../../utils/formatObject", () => jest.fn());
 
+jest.mock("../../configs/mongoose", () => jest.fn());
+
 test("Deve trazer os Destinations para o Flight", async () => {
 
     const flightUUID = v4();

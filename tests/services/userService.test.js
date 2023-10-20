@@ -10,7 +10,9 @@ const formatObject = require("../../utils/formatObject");
 
 jest.mock("../../models/UserModel", () => ({
     findOne: jest.fn(),
-    create: jest.fn()
+    create: jest.fn(),
+    findOneAndUpdate: jest.fn(),
+    findOneAndDelete: jest.fn()
 }));
 
 jest.mock("bcrypt", () => ({
@@ -32,27 +34,27 @@ jest.mock("../../utils/formatObject", () => jest.fn());
 
 jest.mock("../../configs/mongoose", () => jest.fn());
 
+const userSnakeCase = {
+    name: "name",
+    password: "password",
+    cpf: "cpf",
+    age: "age",
+    address: "address",
+    number: "number",
+    passport_number: "passport number"
+}
+
+const userCamelCase = {
+    name: "name",
+    password: "password",
+    cpf: "cpf",
+    age: "age",
+    address: "address",
+    number: "number",
+    passportNumber: "passport number"
+}
+
 describe("userService", () => {
-
-    const userSnakeCase = {
-        name: "",
-        password: "",
-        cpf: "",
-        age: "",
-        address: "",
-        number: "",
-        passport_number: ""
-    }
-
-    const userCamelCase = {
-        name: "",
-        password: "",
-        cpf: "",
-        age: "",
-        address: "",
-        number: "",
-        passportNumber: ""
-    }
 
     test("login", async () => {
 
@@ -150,6 +152,87 @@ describe("userService", () => {
             expect(error.message).toBe("Mock rejected value");
             expect(error.status).toBe(401);
 
+        }
+    });
+});
+
+describe("userService update", () => {
+
+    test("update", async () => {
+        const token = "token";
+
+        jwt.verify.mockResolvedValue(userCamelCase.cpf);
+        User.findOne.mockResolvedValue(userSnakeCase);
+        bcrypt.hash.mockResolvedValue("hashed pass");
+        formatProperties.camelCaseToSnakeCase.mockReturnValue(userSnakeCase);
+        User.findOneAndUpdate.mockResolvedValue(userSnakeCase);
+        formatObject.mockReturnValue(userSnakeCase);
+        formatProperties.snakeCaseToCamelCase.mockReturnValue(userCamelCase);
+
+        const response = await userService.update(userCamelCase, token);
+
+        expect(jwt.verify).toHaveBeenCalledWith(token, process.env.PRIVATE_KEY, expect.any(Function));
+        expect(User.findOne).toHaveBeenCalledWith({ 'cpf': userCamelCase.cpf });
+        expect(bcrypt.hash).toHaveBeenCalledWith(userSnakeCase.password, 12);
+        expect(formatProperties.camelCaseToSnakeCase).toHaveBeenCalledWith(userCamelCase);
+        expect(User.findOneAndUpdate).toHaveBeenCalledWith({ 'cpf': userSnakeCase.cpf }, { ...userSnakeCase }, { new: true });
+        expect(formatObject).toHaveBeenCalledWith(userSnakeCase);
+        expect(formatProperties.snakeCaseToCamelCase).toHaveBeenCalledWith(userSnakeCase);
+        expect(response).toEqual(userCamelCase);
+    });
+
+    test("update Error", async () => {
+
+        const token = "token";
+
+        const errorMessage = "Mock rejected value";
+
+        jwt.verify.mockResolvedValue(userCamelCase.cpf);
+        User.findOne.mockRejectedValue(new CustomError(errorMessage, 403));
+        
+        try {
+            await userService.update(userCamelCase, token);    
+        } catch (error) {
+            expect(error).toBeInstanceOf(CustomError);
+            expect(error.message).toBe("Mock rejected value");
+            expect(error.status).toBe(403);
+        }
+    });
+});
+
+describe("userService delete", () => {
+
+    test("delete", async () => {
+
+        const token = "token";
+
+        jwt.verify.mockResolvedValue(userCamelCase.cpf);
+        User.findOne.mockResolvedValue(userSnakeCase);
+        User.findOneAndDelete.mockImplementation(() => {});
+        console.log(userCamelCase);
+        const message = await userService.del(token);
+        
+        expect(jwt.verify).toHaveBeenCalledWith(token, process.env.PRIVATE_KEY, expect.any(Function));
+        expect(User.findOne).toHaveBeenCalledWith({ 'cpf': userCamelCase.cpf });
+        expect(User.findOneAndDelete).toHaveBeenCalledWith({ 'cpf': userCamelCase.cpf });
+        expect(message).toBe("User deleted sucessfully");
+    });
+
+    test("delete Error", async () => {
+
+        const token = "token";
+
+        const errorMessage = "Mock rejected value";
+
+        jwt.verify.mockResolvedValue(userCamelCase.cpf);
+        User.findOne.mockRejectedValue(new CustomError(errorMessage, 403));
+
+        try {
+            const message = await userService.del(token);
+        } catch (error) {
+            expect(error).toBeInstanceOf(CustomError);
+            expect(error.message).toBe(errorMessage);
+            expect(error.status).toBe(403);
         }
     });
 });

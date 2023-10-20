@@ -7,7 +7,9 @@ jest.mock("../../configs/mongoose", () => jest.fn());
 jest.mock("../../controllers/flightController", () => ({
     findAll: jest.fn(),
     findOne: jest.fn(),
-    save: jest.fn()
+    save: jest.fn(),
+    update: jest.fn(),
+    del: jest.fn()
 }));
 
 const flightMock = {
@@ -61,5 +63,39 @@ describe("flightRoute", () => {
         
         expect(response.status).toBe(201);
         expect(response.body).toEqual(flightMock);
+    });
+
+    test("update", async () => {
+        const flightId = "flightId";
+
+        let param = "";
+
+        flightController.del.mockImplementation(async (req, res) => {
+            param = req.params.flightId;
+            res.status(200).json(req.body);
+        });
+
+        const response = await request(app).put(`/flight/${ flightId }`).send(flightMock);
+
+        expect(response.status).toBe(200);
+        expect(response.json).toBe(req.body);
+        expect(param).toBe(flightId);
+    });
+
+    test("delete", async () => {
+        const flightId = "flightId";
+
+        let param = "";
+
+        flightController.del.mockImplementation(async (req, res) => {
+            param = req.params.flightId;
+            res.status(200).json("Flight deleted sucessfully");
+        });
+
+        const response = await request(app).delete(`/flight/${ flightId }`);
+
+        expect(response.status).toBe(200);
+        expect(response.json).toBe("Flight deleted sucessfully");
+        expect(param).toBe(flightId);
     });
 });

@@ -5,7 +5,9 @@ const flightService = require("../../services/flightService");
 jest.mock("../../services/flightService", () => ({
     findAll: jest.fn(),
     findOne: jest.fn(),
-    save: jest.fn()
+    save: jest.fn(),
+    update: jest.fn(),
+    del: jest.fn()
 }));
 
 describe("flightController findAll", () => {
@@ -179,5 +181,181 @@ describe("flighController save", () => {
 
         expect(res.status).toHaveBeenCalledWith(500);
         expect(res.json).toHaveBeenCalledWith(errorMessage);
+    });
+});
+
+describe("flightController update", () => {
+
+    test("update", async () => {
+
+        const flightId = "flightId";
+
+        const flight = {
+            "_id": "_id",
+            "price": "price",
+            "place": "place",
+            "flightNumber": "flight number",
+            "airportTag": "airport tag",
+            "company": "company",
+            "bagageWeight": "bagage weight",
+            "goingDate": "going date",
+            "returnDate": "going date",
+            "startDestinationId": "start destination id",
+            "finalDestinationId": "final destination id"
+        }
+
+        flightService.update.mockResolvedValue(flight);
+
+        const req = { body: flight, params: { "flightId": flightId } };
+
+        const res = {
+            status: jest.fn().mockReturnThis(),
+            json: jest.fn()
+        }
+
+        await flightController.update(req, res);
+
+        expect(res.status).toHaveBeenCalledWith(200);
+        expect(res.json).toHaveBeenCalledWith(flight);
+        expect(flightService.update).toHaveBeenCalledWith(flight, flightId);
+    });
+
+    test("update CustomError", async () => {
+
+        const flightId = "flightId";
+
+        const flight = {
+            "_id": "_id",
+            "price": "price",
+            "place": "place",
+            "flightNumber": "flight number",
+            "airportTag": "airport tag",
+            "company": "company",
+            "bagageWeight": "bagage weight",
+            "goingDate": "going date",
+            "returnDate": "going date",
+            "startDestinationId": "start destination id",
+            "finalDestinationId": "final destination id"
+        }
+
+        const errorMessage = "Mock rejected value";
+
+        flightService.update.mockRejectedValue(new CustomError(errorMessage, 403));
+
+        const req = { body: flight, params: { "flightId": flightId } };
+
+        const res = {
+            status: jest.fn().mockReturnThis(),
+            json: jest.fn()
+        }
+
+        await flightController.update(req, res);
+
+        expect(res.status).toHaveBeenCalledWith(403);
+        expect(res.json).toHaveBeenCalledWith(errorMessage);
+        expect(flightService.update).toHaveBeenCalledWith(flight, flightId);
+    });
+
+    test("update Error", async () => {
+
+        const flightId = "flightId";
+
+        const flight = {
+            "_id": "_id",
+            "price": "price",
+            "place": "place",
+            "flightNumber": "flight number",
+            "airportTag": "airport tag",
+            "company": "company",
+            "bagageWeight": "bagage weight",
+            "goingDate": "going date",
+            "returnDate": "going date",
+            "startDestinationId": "start destination id",
+            "finalDestinationId": "final destination id"
+        }
+
+        const errorMessage = "Mock rejected value";
+
+        flightService.update.mockRejectedValue(new Error(errorMessage));
+
+        const req = { body: flight, params: { "flightId": flightId } };
+
+        const res = {
+            status: jest.fn().mockReturnThis(),
+            json: jest.fn()
+        }
+
+        await flightController.update(req, res);
+
+        expect(res.status).toHaveBeenCalledWith(500);
+        expect(res.json).toHaveBeenCalledWith(errorMessage);
+        expect(flightService.update).toHaveBeenCalledWith(flight, flightId);
+    });
+});
+
+describe("flightController delete", () => {
+
+    test("delete", async () => {
+
+        const flightId = "flightId";
+
+        const req = { body: {}, params: { "flightId": flightId } };
+
+        const res = {
+            status: jest.fn().mockReturnThis(),
+            json: jest.fn()
+        }
+
+        flightService.del.mockResolvedValue("Flight deleted sucessfully");
+
+        await flightController.del(req, res);
+
+        expect(res.status).toHaveBeenCalledWith(200);
+        expect(res.json).toHaveBeenCalledWith("Flight deleted sucessfully");
+        expect(flightService.del).toHaveBeenCalledWith(flightId);
+    });
+
+    test("delete CustomError", async () => {
+
+        const flightId = "flightId";
+
+        const req = { body: {}, params: { "flightId": flightId } };
+
+        const res = {
+            status: jest.fn().mockReturnThis(),
+            json: jest.fn()
+        }
+
+        const errorMessage = "Mock rejected value";
+
+        flightService.del.mockRejectedValue(new CustomError(errorMessage, 403));
+
+        await flightController.del(req, res);
+
+        expect(res.status).toHaveBeenCalledWith(403);
+        expect(res.json).toHaveBeenCalledWith(errorMessage);
+        expect(flightService.del).toHaveBeenCalledWith(flightId);
+    });
+
+    test("delete Error", async () => {
+
+        const flightId = "flightId";
+
+        const req = { body: {}, params: { "flightId": flightId } };
+
+        const res = {
+            status: jest.fn().mockReturnThis(),
+            json: jest.fn()
+        }
+
+        const errorMessage = "Mock rejected value";
+
+        flightService.del.mockRejectedValue(new Error(errorMessage));
+
+        await flightController.del(req, res);
+
+        expect(res.status).toHaveBeenCalledWith(500);
+        expect(res.json).toHaveBeenCalledWith(errorMessage);
+        expect(flightService.del).toHaveBeenCalledWith(flightId);
     });
 });
