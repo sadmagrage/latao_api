@@ -45,7 +45,7 @@ const data = async (req, res) => {
 
 const update = async (req, res) => {
     try {
-        const user = await userService.update(req.header("Authorization"));
+        const user = await userService.update(req.body, req.header("Authorization"));
 
         res.status(200).json(user);
     } catch (error) {
@@ -59,7 +59,7 @@ const update = async (req, res) => {
 
 const del = async (req, res) => {
     try {
-        const message = await userService.del(req.body, req.header("Authorization"));
+        const message = await userService.del(req.header("Authorization"));
 
         res.status(200).json(message);
     } catch (error) {
