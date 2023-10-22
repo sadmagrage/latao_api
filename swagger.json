@@ -1,0 +1,307 @@
+{
+    "swagger": "2.0",
+    "info": {
+      "title": "Latão Airlines",
+      "version": "1.0.0"
+    },
+    "host": "localhost:3000",
+    "schemes": ["http"],
+    "consumes": ["application/json"],
+    "produces": ["application/json"],
+    "tags": [
+        {
+            "name": "user"
+        },
+        {
+            "name": "card"
+        },
+        {
+            "name": "destination"
+        },
+        {
+            "name": "flight"
+        }],
+    "paths": {
+      "/user/login": {
+        "post": {
+          "tags": ["user"],
+          "summary": "Faz o login",
+          "description": "Verifica as credenciais, gera e retorna um token",
+          "parameters": [{
+            "name": "userLogin",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/userLogin"
+            }
+          }],
+          "responses": {
+            "200": {
+              "description": "Sucesso",
+              "schema": {
+                "$ref": "#/definitions/token"
+              }
+            },
+            "401": {
+              "description": "Credenciais inválidas"
+            },
+            "500": {
+              "description": "Erro"
+            }
+          }
+        }
+      },
+      "/user/register": {
+        "post": {
+          "tags": ["user"],
+          "summary": "Cria usuário",
+          "description": "Cria usuário e retorna token",
+          "consumes": ["application/json"],
+          "parameters": [{
+            "name": "userDto",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/userRequest"
+            }
+          }],
+          "responses": {
+            "201": {
+              "description": "Criado com sucesso",
+              "schema": {
+                "$ref": "#/definitions/token"
+              }
+            },
+            "409": {
+              "description": "CPF já registrado"
+            },
+            "500": {
+              "description": "Erro"
+            }
+          }
+        }
+      },
+      "/user/data": {
+        "get": {
+          "tags": ["user"],
+          "summary": "Retorna os dados do usuário",
+          "description": "Retorna os dados do usuário pelo token",
+          "parameters": [{
+            "name": "Authorization",
+            "in": "header",
+            "type": "string",
+            "required": true
+          }],
+          "responses": {
+            "200": {
+              "description": "Dados retornados com sucesso",
+              "schema": {
+                "$ref": "#/definitions/userData"
+              }
+            },
+            "401": {
+              "description": "Token inválido ou expirado"
+            },
+            "500": {
+              "description": "Erro"
+            }
+          }
+        }
+      },
+      "/user/update": {
+        "put": {
+          "tags": ["user"],
+          "summary": "Altera dados do usuário",
+          "consumes": ["application/json"],
+          "parameters": [{
+            "name": "userRequest",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/userRequest"
+            }
+          }, {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "type": "string"
+          }],
+          "responses": {
+            "200": {
+              "description": "Alterado com sucesso",
+              "schema": {
+                "$ref": "#/definitions/userResponse"
+              }
+            },
+            "401": {
+              "description": "Token inválido ou expirado"
+            },
+            "404": {
+              "description": "Usuário não encontrado"
+            },
+            "500": {
+              "description": "Erro"
+            }
+          }
+        }
+      },
+      "/user/delete": {
+        "delete": {
+          "tags": ["user"],
+          "summary": "Deleta o usuário",
+          "produces": ["application/json"],
+          "parameters": [{
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "type": "string"
+          }],
+          "responses": {
+            "200": {
+              "description": "Deletado com sucesso",
+              "schema": {
+                "example": "User deleted sucessfully."
+              }
+            },
+            "401": {
+              "description": "Token inválido ou expirado"
+            },
+            "404": {
+              "description": "Usuário não encontrado"
+            },
+            "500": {
+              "description": "Erro"
+            }
+          }
+        }
+      }
+    },
+    "definitions": {
+      "userRequest": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "Lucas Trindade da Silva"
+          },
+          "password": {
+            "type": "string",
+            "example": "coxinha123"
+          },
+          "cpf": {
+            "type": "string",
+            "example": "00000000000"
+          },
+          "age": {
+            "type": "number",
+            "example": 19
+          },
+          "address": {
+            "type": "string",
+            "example": "endereco ficticio"
+          },
+          "number": {
+            "type": "string",
+            "example": 24
+          },
+          "passportNumber": {
+            "type": "string",
+            "example": "31203123"
+          }
+        }
+      },
+      "userResponse": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "example": "00000000-0000-0000-0000-000000000000"
+          },
+          "name": {
+            "type": "string",
+            "example": "Lucas Trindade da Silva"
+          },
+          "password": {
+            "type": "string",
+            "example": "coxinha123"
+          },
+          "cpf": {
+            "type": "string",
+            "example": "00000000000"
+          },
+          "age": {
+            "type": "number",
+            "example": 19
+          },
+          "address": {
+            "type": "string",
+            "example": "endereco ficticio"
+          },
+          "number": {
+            "type": "string",
+            "example": 24
+          },
+          "passportNumber": {
+            "type": "string",
+            "example": "31203123"
+          }
+        }
+      },
+      "userData": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "example": "00000000-0000-0000-0000-000000000000"
+          },
+          "name": {
+            "type": "string",
+            "example": "Lucas Trindade da Silva"
+          },
+          "cpf": {
+            "type": "string",
+            "example": "00000000000"
+          },
+          "age": {
+            "type": "number",
+            "example": 19
+          },
+          "address": {
+            "type": "string",
+            "example": "endereco ficticio"
+          },
+          "number": {
+            "type": "string",
+            "example": 24
+          },
+          "passportNumber": {
+            "type": "string",
+            "example": "31203123"
+          }
+        }
+      },
+      "userLogin": {
+        "type": "object",
+        "properties": {
+          "cpf": {
+            "type": "string",
+            "example": "12390210311"
+          },
+          "password": {
+            "type": "string",
+            "example": "2j31j2@j2$"
+          }
+        }
+      },
+      "token": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string",
+            "example": "token_jwt"
+          }
+        }
+      }
+    }
+  }
+  
