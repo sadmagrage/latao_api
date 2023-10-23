@@ -70,7 +70,7 @@ describe("flightRoute", () => {
 
         let param = "";
 
-        flightController.del.mockImplementation(async (req, res) => {
+        flightController.update.mockImplementation(async (req, res) => {
             param = req.params.flightId;
             res.status(200).json(req.body);
         });
@@ -78,7 +78,7 @@ describe("flightRoute", () => {
         const response = await request(app).put(`/flight/${ flightId }`).send(flightMock);
 
         expect(response.status).toBe(200);
-        expect(response.json).toBe(req.body);
+        expect(response.body).toEqual(flightMock);
         expect(param).toBe(flightId);
     });
 
@@ -95,7 +95,7 @@ describe("flightRoute", () => {
         const response = await request(app).delete(`/flight/${ flightId }`);
 
         expect(response.status).toBe(200);
-        expect(response.json).toBe("Flight deleted sucessfully");
+        expect(response.body).toBe("Flight deleted sucessfully");
         expect(param).toBe(flightId);
     });
 });

@@ -74,7 +74,7 @@ const update = async (userDto, token) => {
 
     userDto = formatProperties.camelCaseToSnakeCase(userDto);
 
-    const user = formatObject(User.findOneAndUpdate({ 'cpf': cpf }, { ...userDto }, { new: true }));
+    const user = formatObject(await User.findOneAndUpdate({ 'cpf': cpf }, { ...userDto }, { new: true }));
 
     const userCamelCase = formatProperties.snakeCaseToCamelCase(user);
 

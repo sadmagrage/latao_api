@@ -8,6 +8,8 @@ const formatProperties = require("../utils/formatProperties");
 const findAll = async (userId) => {
     const cards = formatObject(await Card.find({ 'user_id': userId }));
 
+    if (!cards) throw new CustomError("User not found", 404);
+
     return cards.map(formatProperties.snakeCaseToCamelCase);
 }
 

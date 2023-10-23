@@ -64,7 +64,7 @@ describe("userRoute", () => {
             res.status(200).json(userMock);
         });
 
-        const response = await request(app).get("/user/data").set('Authorization', "token");
+        const response = await request(app).get("/user").set('Authorization', "token");
 
         expect(response.status).toBe(200);
         expect(response.body).toEqual(userMock);
@@ -80,7 +80,7 @@ describe("userRoute", () => {
             res.status(200).json(req.body);
         });
 
-        const response = await request(app).put("/user/update").send(userMock).set('Authorization', "token");
+        const response = await request(app).put("/user").send(userMock).set('Authorization', "token");
 
         expect(response.status).toBe(200);
         expect(response.body).toEqual(userMock);
@@ -96,7 +96,7 @@ describe("userRoute", () => {
             res.status(200).json("User deleted sucessfully");
         });
 
-        const response = await request(app).del("/user/delete").send(userMock).set('Authorization', "token");
+        const response = await request(app).del("/user").send(userMock).set('Authorization', "token");
 
         expect(response.status).toBe(200);
         expect(response.body).toBe("User deleted sucessfully");

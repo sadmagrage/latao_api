@@ -81,7 +81,7 @@
           }
         }
       },
-      "/user/data": {
+      "/user": {
         "get": {
           "tags": ["user"],
           "summary": "Retorna os dados do usuário",
@@ -106,9 +106,7 @@
               "description": "Erro"
             }
           }
-        }
-      },
-      "/user/update": {
+        },
         "put": {
           "tags": ["user"],
           "summary": "Altera dados do usuário",
@@ -143,9 +141,7 @@
               "description": "Erro"
             }
           }
-        }
-      },
-      "/user/delete": {
+        },
         "delete": {
           "tags": ["user"],
           "summary": "Deleta o usuário",
@@ -174,9 +170,606 @@
             }
           }
         }
+      },
+      "/card/{userId}": {
+        "get": {
+          "tags": ["card"],
+          "summary": "Retorna todos os cartão do usuário",
+          "parameters": [{
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }],
+          "responses": {
+            "200": {
+              "description": "Sucesso",
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/definitions/card"
+                }
+              }
+            },
+            "404": {
+              "description": "Usuário não encontrado"
+            },
+            "500": {
+              "description": "Erro"
+            }
+          }
+        },
+        "post": {
+          "summary": "Adiciona um cartão a conta do usuário",
+          "tags": ["card"],
+          "parameters": [{
+            "name": "cardDto",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/cardDto"
+            }
+          },
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }],
+          "responses": {
+            "200": {
+              "description": "Sucesso",
+              "schema": {
+                "$ref": "#/definitions/card"
+              }
+            },
+            "500": {
+              "description": "Erro"
+            }
+          }
+        }
+      },
+      "/card/{userId}/{cardId}": {
+        "get": {
+          "tags": ["card"],
+          "summary": "Retorna um cartão específico do usuário",
+          "parameters": [{
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "cardId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }],
+          "responses": {
+            "200": {
+              "description": "Sucesso",
+              "schema": {
+                "$ref": "#/definitions/card"
+              }
+            },
+            "404": {
+              "description": "Card not found"
+            },
+            "500": {
+              "description": "Erro"
+            }
+          }
+        },
+        "put": {
+          "tags": ["card"],
+          "summary": "Altera valores do cartão específico",
+          "parameters": [
+          {
+            "name": "cardDto",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/cardDto"
+            }
+          },
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "cardId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }],
+          "responses": {
+            "200": {
+              "description": "Sucesso",
+              "schema": {
+                "$ref": "#/definitions/card"
+              }
+            },
+            "404": {
+              "description": "Card not found"
+            },
+            "500": {
+              "description": "Erro"
+            }
+          }
+        },
+        "delete": {
+          "tags": ["card"],
+          "summary": "Delete cartão específico",
+          "parameters": [{
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "cardId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }],
+          "responses": {
+            "200": {
+              "description": "Sucesso"
+            },
+            "404": {
+              "description": "Card not found"
+            },
+            "500": {
+              "description": "Erro"
+            }
+          }
+        }
+      },
+      "/destination": {
+        "get": {
+          "tags": ["destination"],
+          "summary": "Retorna todos os destinos",
+          "responses": {
+            "200": {
+              "description": "Sucesso",
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/definitions/destination"
+                }
+              }
+            },
+            "500": {
+              "description": "Erro"
+            }
+          }
+        },
+        "post": {
+          "tags": ["destination"],
+          "summary": "Salva um novo destino",
+          "parameters": [{
+            "name": "destinationDto",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/destinationDto"
+            }
+          }],
+          "responses": {
+            "200": {
+              "description": "Sucesso",
+              "schema": {
+                "$ref": "#/definitions/destination"
+              }
+            },
+            "500": {
+              "description": "Erro"
+            }
+          }
+        }
+      },
+      "/destination/{destinationId}": {
+        "get": {
+          "tags": ["destination"],
+          "summary": "Retorna um destination específico",
+          "parameters": [{
+            "name": "destinationId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }],
+          "responses": {
+            "200": {
+              "description": "Sucesso",
+              "schema": {
+                "$ref": "#/definitions/destination"
+              }
+            },
+            "404": {
+              "description": "Destination not found"
+            },
+            "500": {
+              "description": "Erro"
+            }
+          }
+        },
+        "put": {
+          "tags": ["destination"],
+          "summary": "Altera os dados de um destination específico",
+          "parameters": [{
+            "name": "destinationDto",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/destinationDto"
+            }
+          },
+          {
+          "name": "destinationId",
+          "in": "path",
+          "required": true,
+          "type": "string"
+          }],
+          "responses": {
+            "200": {
+              "description": "Sucesso",
+              "schema": {
+                "$ref": "#/definitions/destination"
+              }
+            },
+            "404": {
+              "description": "Destination not found"
+            },
+            "500": {
+              "description": "Erro"
+            }
+          }
+        },
+        "delete": {
+          "tags": ["destination"],
+          "summary": "Exclui um destination específico",
+          "parameters": [{
+            "name": "destinationId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }],
+          "responses": {
+            "200": {
+              "description": "Sucesso"
+            },
+            "404": {
+              "description": "Destination not found"
+            },
+            "500": {
+              "description": "Erro"
+            }
+          }
+        }
+      },
+      "/flight": {
+        "get": {
+          "tags": ["flight"],
+          "summary": "Retorna todos os flights",
+          "responses": {
+            "200": {
+              "description": "Sucesso",
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/definitions/flight"
+                }
+              }
+            },
+            "500": {
+              "description": "Erro"
+            }
+          }
+        },
+        "post": {
+          "tags": ["flight"],
+          "summary": "Salva um novo flight",
+          "parameters": [{
+            "name": "flightDto",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/flightDto"
+            }
+          }],
+          "responses": {
+            "200": {
+              "description": "Sucesso",
+              "schema": {
+                "$ref": "#/definitions/flight"
+              }
+            }
+          }
+        }
+      },
+      "/flight/{flightId}": {
+        "get": {
+          "tags": ["flight"],
+          "summary": "Retorna um flight específico",
+          "parameters": [{
+            "name": "flightId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }],
+          "responses": {
+            "200": {
+              "description": "200",
+              "schema": {
+                "$ref": "#/definitions/flight"
+              }
+            },
+            "404": {
+              "description": "Flight not found"
+            },
+            "500": {
+              "description": "Erro"
+            }
+          }
+        },
+        "put": {
+          "tags": ["flight"],
+          "summary": "Altera os dados de um flight específico",
+          "parameters": [{
+            "name": "flightDto",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/flightDto"
+            }
+          },
+          {
+            "name": "flightId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }],
+          "responses": {
+            "200": {
+              "description": "Sucesso",
+              "schema": {
+                "$ref": "#/definitions/flight"
+              }
+            },
+            "404": {
+              "description": "Flight not found"
+            },
+            "500": {
+              "description": "Erro"
+            }
+          }
+        },
+        "delete": {
+          "tags": ["flight"],
+          "summary": "Exclui um flight específico",
+          "parameters": [{
+            "name": "flightId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }],
+          "responses": {
+            "200": {
+              "description": "Sucesso"
+            },
+            "404": {
+              "description": "Flight not found"
+            },
+            "500": {
+              "description": "Erro"
+            }
+          }
+        }
       }
     },
     "definitions": {
+      "flightDto": {
+        "type": "object",
+        "properties": {
+          "price": {
+            "type": "string",
+            "example": "R$3000,00"
+          },
+          "place": {
+            "type": "array",
+            "example": ["10", "11", "12"]
+          },
+          "flightNumber": {
+            "type": "number",
+            "example": 98
+          },
+          "airportTag": {
+            "type": "string",
+            "example": "LT"
+          },
+          "company": {
+            "type": "string",
+            "example": "Latão Airlines"
+          },
+          "bagageWeight": {
+            "type": "string",
+            "example": "30kg"
+          },
+          "goingDate": {
+            "type": "string",
+            "format": "date",
+            "example": "2019-12-24"
+          },
+          "returnDate": {
+            "type": "string",
+            "format": "date",
+            "example": "2019-12-24"
+          },
+          "startDestinationId": {
+            "type": "string",
+            "example": "00000000-0000-0000-0000-000000000000"
+          },
+          "finalDestinationId": {
+            "type": "string",
+            "example": "00000000-0000-0000-0000-000000000000"
+          }
+        }
+      },
+      "flight": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "example": "00000000-0000-0000-0000-000000000000"
+          },
+          "price": {
+            "type": "string",
+            "example": "R$3000,00"
+          },
+          "place": {
+            "type": "array",
+            "example": ["10", "11", "12"]
+          },
+          "flightNumber": {
+            "type": "number",
+            "example": 98
+          },
+          "airportTag": {
+            "type": "string",
+            "example": "LT"
+          },
+          "company": {
+            "type": "string",
+            "example": "Latão Airlines"
+          },
+          "bagageWeight": {
+            "type": "string",
+            "example": "30kg"
+          },
+          "goingDate": {
+            "type": "string",
+            "format": "date",
+            "example": "2019-12-24"
+          },
+          "returnDate": {
+            "type": "string",
+            "format": "date",
+            "example": "2019-12-24"
+          },
+          "startDestination": {
+            "type": "object",
+            "$ref": "#/definitions/destination"
+          },
+          "finalDestination": {
+            "type": "object",
+            "$ref": "#/definitions/destination"
+          },
+          "startDestinationId": {
+            "type": "string",
+            "example": "00000000-0000-0000-0000-000000000000"
+          },
+          "finalDestinationId": {
+            "type": "string",
+            "example": "00000000-0000-0000-0000-000000000000"
+          }
+        }
+      },
+      "destination": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type":"string",
+            "example": "00000000-0000-0000-0000-000000000000"
+          },
+          "cityName": {
+            "type": "string",
+            "example": "São Paulo"
+          },
+          "zipcode": {
+            "type": "string",
+            "example": "21347829"
+          },
+          "cityTag": {
+            "type": "string",
+            "example": "SP"
+          },
+          "country": {
+            "type": "string",
+            "example": "Brasil"
+          }
+        }
+      },
+      "destinationDto": {
+        "type": "object",
+        "properties": {
+          "cityName": {
+            "type": "string",
+            "example": "São Paulo"
+          },
+          "zipcode": {
+            "type": "string",
+            "example": "21347829"
+          },
+          "cityTag": {
+            "type": "string",
+            "example": "SP"
+          },
+          "country": {
+            "type": "string",
+            "example": "Brasil"
+          }
+        }
+      },
+      "cardDto": {
+        "type": "object",
+        "properties": {
+          "securityNumber": {
+            "type": "number",
+            "example": 0
+          },
+          "validity": {
+            "type": "string",
+            "format": "date",
+            "example": "2019-12-24"
+          },
+          "propertyName": {
+            "type": "string",
+            "example": "Lucas Ceifa"
+          },
+          "userId": {
+            "type": "string",
+            "example": "00000000-0000-0000-0000-000000000000"
+          }
+        }
+      },
+      "card": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "example": "00000000-0000-0000-0000-000000000000"
+          },
+          "securityNumber": {
+            "type": "number",
+            "example": 0
+          },
+          "validity": {
+            "type": "string",
+            "format": "date",
+            "example": "2019-12-24"
+          },
+          "propertyName": {
+            "type": "string",
+            "example": "Lucas Ceifa"
+          },
+          "userId": {
+            "type": "string",
+            "example": "00000000-0000-0000-0000-000000000000"
+          }
+        }
+      },
       "userRequest": {
         "type": "object",
         "properties": {

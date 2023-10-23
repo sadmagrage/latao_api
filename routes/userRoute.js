@@ -9,8 +9,8 @@ route.use(bodyParser.json());
 
 route.post("/login", userController.login);
 route.post("/register", userController.register);
-route.get("/data", userController.data);
-route.put("/update", userController.update);
-route.delete("/delete", userController.del);
+route.get("/", userController.data);
+route.put("/", userController.update);
+route.delete("/", userController.del);
 
 module.exports = route;

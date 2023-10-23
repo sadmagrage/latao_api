@@ -1,4 +1,7 @@
 const express = require("express");
+const swaggerUi = require("swagger-ui-express")
+
+const swagger = require("./swagger.json");
 
 const userRoute = require("./routes/userRoute");
 const flightRoute = require("./routes/flightRoute");
@@ -7,6 +10,7 @@ const cardRoute = require("./routes/cardRoute");
 
 const app = express();
 
+app.use("/swagger", swaggerUi.serve, swaggerUi.setup(swagger));
 app.use("/user", userRoute);
 app.use("/flight", flightRoute);
 app.use("/destination", destinationRoute);

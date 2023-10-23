@@ -209,7 +209,7 @@ describe("userService delete", () => {
         jwt.verify.mockResolvedValue(userCamelCase.cpf);
         User.findOne.mockResolvedValue(userSnakeCase);
         User.findOneAndDelete.mockImplementation(() => {});
-        console.log(userCamelCase);
+        
         const message = await userService.del(token);
         
         expect(jwt.verify).toHaveBeenCalledWith(token, process.env.PRIVATE_KEY, expect.any(Function));
