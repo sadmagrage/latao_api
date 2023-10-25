@@ -171,6 +171,62 @@
           }
         }
       },
+      "/user/flight": {
+        "get": {
+          "tags": ["user"],
+          "summary": "Retorna uma lista com os flights do usuário",
+          "produces": ["application/json"],
+          "parameters": [{
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "type": "string"
+          }],
+          "responses": {
+            "200": {
+              "description": "Sucesso",
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/definitions/flight"
+                }
+              }
+            }
+          }
+        }
+      },
+      "/user/flight/{flightId}": {
+        "post": {
+          "tags": ["user"],
+          "summary": "Adiciona um flight na lista do usuário",
+          "parameters": [{
+            "name": "flightDto",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/flight"
+            }
+          }, {
+            "name": "flightId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }, {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "type": "string"
+          }],
+          "responses": {
+            "200": {
+              "description": "Sucesso",
+              "schema": {
+                "$ref": "#/definitions/card"
+              }
+            }
+          }
+        }
+      },
       "/card/{userId}": {
         "get": {
           "tags": ["card"],
@@ -729,6 +785,10 @@
             "type": "number",
             "example": 0
           },
+          "cardNumber": {
+            "type": "string",
+            "example": "00000000000000000000"
+          },
           "validity": {
             "type": "string",
             "format": "date",
@@ -754,6 +814,10 @@
           "securityNumber": {
             "type": "number",
             "example": 0
+          },
+          "cardNumber": {
+            "type": "string",
+            "example": "00000000000000000000"
           },
           "validity": {
             "type": "string",
@@ -837,6 +901,10 @@
           "passportNumber": {
             "type": "string",
             "example": "31203123"
+          },
+          "flights_id": {
+            "type": "array",
+            "example": [ "00000000-0000-0000-0000-000000000000" ]
           }
         }
       },
@@ -870,6 +938,10 @@
           "passportNumber": {
             "type": "string",
             "example": "31203123"
+          },
+          "flights_id": {
+            "type": "array",
+            "example": [ "00000000-0000-0000-0000-000000000000" ]
           }
         }
       },

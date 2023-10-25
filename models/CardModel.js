@@ -14,7 +14,7 @@ const cardSchema = new Mongoose.Schema({
         required: true
     },
     card_number: {
-        type: Number,
+        type: String,
         required: true
     },
     validity: {
