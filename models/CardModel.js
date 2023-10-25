@@ -13,7 +13,7 @@ const cardSchema = new Mongoose.Schema({
         type: Number,
         required: true
     },
-    cardNumber: {
+    card_number: {
         type: Number,
         required: true
     },
