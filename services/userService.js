@@ -4,9 +4,11 @@ require("dotenv").config();
 
 require("../configs/mongoose");
 const User = require("../models/UserModel");
+const flightService = require("../services/flightService");
 const CustomError = require("../errors/CustomError");
 const formatProperties = require("../utils/formatProperties");
 const formatObject = require("../utils/formatObject");
+const { binToUuid } = require("../utils/conversor");
 
 const login = async (userDto) => {
     const user = await User.findOne({ 'cpf': userDto.cpf });
@@ -97,4 +99,38 @@ const del = async (token) => {
     return "User deleted sucessfully";
 };
 
-module.exports = { login, register, data, update, del };
+const getFlights = async (token) => {
+    const cpf = await jwt.verify(token, process.env.PRIVATE_KEY, (err, decoded) => {
+        if (err) throw new CustomError(err.message, 401);
+
+        return decoded.cpf;
+    });
+
+    const { flights_id } = await User.findOne({ 'cpf' : cpf }).select("flights_id");
+
+    const idToFlightObj = async (flightId) => {
+        return await flightService.findOne(binToUuid(flightId));
+    };
+
+    return Promise.all(flights_id.map(idToFlightObj));
+};
+
+const postFlight = async (flightId, token) => {
+    const cpf = await jwt.verify(token, process.env.PRIVATE_KEY, (err, decoded) => {
+        if (err) throw new CustomError(err.message, 401);
+
+        return decoded.cpf;
+    });
+
+    const user = await User.findOne({ 'cpf': cpf });
+
+    if (!user) throw new CustomError("User not found", 404);
+
+    user.flights_id.push(flightId);
+
+    const updatedUser = await User.findOneAndUpdate({ 'cpf': cpf }, { ...user }, { new: true });
+
+    return formatObject(updatedUser);
+};
+
+module.exports = { login, register, data, update, del, getFlights, postFlight };

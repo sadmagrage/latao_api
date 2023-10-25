@@ -34,7 +34,11 @@ const userSchema = new Mongoose.Schema({
     },
     passport_number: {
         type: String
-    }
+    },
+    flights_id: [{
+        type: Mongoose.Schema.Types.UUID,
+        ref: "flight"
+    }]
 });
 
 const User = Mongoose.model("user", userSchema);

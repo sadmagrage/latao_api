@@ -13,4 +13,7 @@ route.get("/", userController.data);
 route.put("/", userController.update);
 route.delete("/", userController.del);
 
+route.get("/flight", userController.getFlights);
+route.post("/flight/:flightId", userController.postFlight);
+
 module.exports = route;

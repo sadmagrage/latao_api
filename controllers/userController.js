@@ -22,10 +22,10 @@ const register = async (req, res) => {
         res.status(201).json(token);
     } catch (error) {
         if (error instanceof CustomError) {
-            res.status(error.status).json(error);
+            res.status(error.status).json(error.message);
             return
         }
-        res.status(500).json(error);
+        res.status(500).json(error.message);
     }
 }
 
@@ -71,4 +71,32 @@ const del = async (req, res) => {
     }
 };
 
-module.exports = { login, register, data, update, del };
+const getFlights = async (req, res) => {
+    try {
+        const flights = await userService.getFlights(req.header("Authorization"));
+
+        res.status(200).json(flights);
+    } catch (error) {
+        if (error instanceof CustomError) {
+            res.status(error.status).json(error.message);
+            return
+        }
+        res.status(500).json(error.message);
+    }
+}
+
+const postFlight = async (req, res) => {
+    try {
+        const flight = await userService.postFlight(req.params.flightId, req.header("Authorization"));
+
+        res.status(201).json(flight);
+    } catch (error) {
+        if (error instanceof CustomError) {
+            res.status(error.status).json(error.message);
+            return
+        }
+        res.status(500).json(error.message);
+    }
+}
+
+module.exports = { login, register, data, update, del, getFlights, postFlight };

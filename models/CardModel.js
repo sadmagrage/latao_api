@@ -13,6 +13,10 @@ const cardSchema = new Mongoose.Schema({
         type: Number,
         required: true
     },
+    cardNumber: {
+        type: Number,
+        required: true
+    },
     validity: {
         type: Date,
         required: true
