@@ -204,7 +204,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/flight"
+              "$ref": "#/definitions/userFlight"
             }
           }, {
             "name": "flightId",
@@ -831,6 +831,43 @@
           "userId": {
             "type": "string",
             "example": "00000000-0000-0000-0000-000000000000"
+          }
+        }
+      },
+      "userFlight": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "example": "00000000-0000-0000-0000-000000000000"
+          },
+          "name": {
+            "type": "string",
+            "example": "Lucas Trindade da Silva"
+          },
+          "cpf": {
+            "type": "string",
+            "example": "00000000000"
+          },
+          "age": {
+            "type": "number",
+            "example": 19
+          },
+          "address": {
+            "type": "string",
+            "example": "endereco ficticio"
+          },
+          "number": {
+            "type": "string",
+            "example": 24
+          },
+          "passportNumber": {
+            "type": "string",
+            "example": "31203123"
+          },
+          "flights_id": {
+            "type": "array",
+            "example": [ "00000000-0000-0000-0000-000000000000" ]
           }
         }
       },

@@ -128,9 +128,11 @@ const postFlight = async (flightId, token) => {
 
     user.flights_id.push(flightId);
 
-    const updatedUser = await User.findOneAndUpdate({ 'cpf': cpf }, { ...user }, { new: true });
+    const updatedUser = formatObject(await User.findOneAndUpdate({ 'cpf': cpf }, { ...user }, { new: true }));
 
-    return formatObject(updatedUser);
+    delete updatedUser.password;
+
+    return 
 };
 
 module.exports = { login, register, data, update, del, getFlights, postFlight };
