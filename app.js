@@ -1,5 +1,6 @@
 const express = require("express");
 const swaggerUi = require("swagger-ui-express")
+const cors = require("cors");
 
 const swagger = require("./swagger.json");
 
@@ -9,6 +10,8 @@ const destinationRoute = require("./routes/destinationRoute");
 const cardRoute = require("./routes/cardRoute");
 
 const app = express();
+
+app.use(cors({ origin: "*" }));
 
 app.use("/swagger", swaggerUi.serve, swaggerUi.setup(swagger));
 app.use("/user", userRoute);
