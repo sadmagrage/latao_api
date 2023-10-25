@@ -16,17 +16,17 @@ const login = async (req, res) => {
 }
 
 const register = async (req, res) => {
-    /* try { */
+    try {
         const token = await userService.register(req.body);
         
-        res.status(201).json(token);/* 
+        res.status(201).json(token);
     } catch (error) {
         if (error instanceof CustomError) {
-            res.status(error.status).json(error.message);
+            res.status(error.status).json(error);
             return
         }
-        res.status(500).json(error.message);
-    } */
+        res.status(500).json(error);
+    }
 }
 
 const data = async (req, res) => {

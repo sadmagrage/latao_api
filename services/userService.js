@@ -18,7 +18,7 @@ const login = async (userDto) => {
     if (acess) {
         const token = jwt.sign({ cpf: user.cpf }, process.env.PRIVATE_KEY, { expiresIn: "1h" });
 
-        return { "token": token };
+        return token;
     }
     else {
         throw new CustomError("Wrong credentials", 401);
@@ -38,7 +38,7 @@ const register = async (userDto) => {
 
     const token = jwt.sign({ cpf: user.cpf }, process.env.PRIVATE_KEY, { expiresIn: "1h" });
 
-    return { "token": token };
+    return token;
 };
 
 const data = async (token) => {
