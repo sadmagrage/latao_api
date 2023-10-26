@@ -14,15 +14,8 @@ const flightSchema = new Mongoose.Schema({
         required: true
     },
     place: [{
-        user_id: {
-            type: Mongoose.Schema.Types.UUID,
-            ref: 'user',
-            required: true
-        },
-        user_places: [{
-            type: String,
-            required: true
-        }]
+        type: Object,
+        required: true
     }],
     flight_number: {
         type: Number
