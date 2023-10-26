@@ -227,6 +227,28 @@
           }
         }
       },
+      "/user/verificate": {
+        "post": {
+          "tags": ["user"],
+          "summary": "",
+          "parameters": [{
+            "name": "passwordDto",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/passwordDto"
+            }
+          }],
+          "responses": {
+            "200": {
+              "description": "Sucesso"
+            },
+            "500": {
+              "description": "Erro"
+            }
+          }
+        }
+      },
       "/card/{userId}": {
         "get": {
           "tags": ["card"],
@@ -626,6 +648,15 @@
       }
     },
     "definitions": {
+      "passwordDto": {
+        "type": "object",
+        "properties": {
+          "password": {
+            "type": "string",
+            "example": "123"
+          }
+        }
+      },
       "flightDto": {
         "type": "object",
         "properties": {
@@ -635,7 +666,10 @@
           },
           "place": {
             "type": "array",
-            "example": ["10", "11", "12"]
+            "example": {
+              "user_id": "00000000-0000-0000-0000-000000000000",
+              "user_places": ["1A", "2B"]
+            }
           },
           "flightNumber": {
             "type": "number",
@@ -686,7 +720,10 @@
           },
           "place": {
             "type": "array",
-            "example": ["10", "11", "12"]
+            "example": {
+              "user_id": "00000000-0000-0000-0000-000000000000",
+              "user_places": ["1A", "2B"]
+            }
           },
           "flightNumber": {
             "type": "number",

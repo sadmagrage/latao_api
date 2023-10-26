@@ -135,4 +135,18 @@ const postFlight = async (flightId, token) => {
     return 
 };
 
-module.exports = { login, register, data, update, del, getFlights, postFlight };
+const checkPassword = async (token, passwordToCheck) => {
+    const cpf = await jwt.verify(token, process.env.PRIVATE_KEY, (err, decoded) => {
+        if (err) throw CustomError(err.message, 401);
+
+        return decoded.cpf;
+    });
+
+    const { password } = await User.findOne({ "cpf": cpf }).select("password");
+
+    const isEqual = bcrypt.compare(passwordToCheck, password);
+    
+    return isEqual;
+};
+
+module.exports = { login, register, data, update, del, getFlights, postFlight, checkPassword };

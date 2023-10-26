@@ -99,4 +99,18 @@ const postFlight = async (req, res) => {
     }
 }
 
-module.exports = { login, register, data, update, del, getFlights, postFlight };
+const checkPassword = async (req, res) => {
+    try {
+        const verification = await userService.checkPassword(req.header("Authorization"), req.body.password);
+
+        res.status(200).json(verification);
+    } catch (error) {
+        if (error instanceof CustomError) {
+            res.status(error.status).json(error.message);
+            return
+        }
+        res.status(500).json(error.message);
+    }
+};
+
+module.exports = { login, register, data, update, del, getFlights, postFlight, checkPassword };

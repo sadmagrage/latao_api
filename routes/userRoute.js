@@ -16,4 +16,6 @@ route.delete("/", userController.del);
 route.get("/flight", userController.getFlights);
 route.post("/flight/:flightId", userController.postFlight);
 
+route.post("/verificate", userController.checkPassword);
+
 module.exports = route;
